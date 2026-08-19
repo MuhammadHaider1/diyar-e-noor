@@ -12,8 +12,16 @@ class PostCategory(str, enum.Enum):
     mohabbat = "mohabbat"
     pakeezgi = "pakeezgi"
     halal_relationships = "halal_relationships"
+    halalrelationship = "halalrelationship"
     nikah = "nikah"
     advice = "advice"
+
+    @classmethod
+    def _missing_(cls, value):
+        for member in cls:
+            if member.value == value or member.value.replace("_", "") == value.replace("_", ""):
+                return member
+        return None
 
 
 class PostStatus(str, enum.Enum):
