@@ -61,14 +61,14 @@ export default function SuperAdminDashboard() {
 
   const fetchData = async () => {
     try {
-      const [reqsRes, adminsRes, paysRes] = await Promise.all([
+      const [reqsRes, adminsRes, paysRes] = await Promise.allSettled([
         api.get('/superadmin/admin-requests'),
         api.get('/superadmin/admins'),
         api.get('/superadmin/payments'),
       ]);
-      setRequests(reqsRes.data);
-      setAdmins(adminsRes.data);
-      setPayments(paysRes.data);
+      if (reqsRes.status === 'fulfilled') setRequests(reqsRes.value.data);
+      if (adminsRes.status === 'fulfilled') setAdmins(adminsRes.value.data);
+      if (paysRes.status === 'fulfilled') setPayments(paysRes.value.data);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {

@@ -97,7 +97,7 @@ async def list_payments(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_super_admin)
 ):
-    result = await db.execute(select(AdminSubscription).order_by(AdminSubscription.created_at.desc()))
+    result = await db.execute(select(AdminSubscription).order_by(AdminSubscription.started_at.desc()))
     payments = result.scalars().all()
     return payments
 
