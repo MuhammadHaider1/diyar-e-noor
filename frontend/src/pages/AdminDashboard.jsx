@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { useCategories } from '../hooks/useCategories';
 import api from '../lib/api';
-import { PenTool, Trash2, Eye, Edit2, Plus, Clock, CheckCircle, XCircle, Image as ImageIcon } from 'lucide-react';
+import { PenTool, Trash2, Eye, Edit2, Plus, Clock, CheckCircle, XCircle, X, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
