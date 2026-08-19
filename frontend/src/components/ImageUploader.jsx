@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
 import { Upload, X, Check, ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 function getCroppedImg(imageSrc, pixelCrop) {
   return new Promise((resolve) => {
@@ -26,6 +27,7 @@ function getCroppedImg(imageSrc, pixelCrop) {
 }
 
 export default function ImageUploader({ onUpload, aspect = 1, label = "Upload Image", className = "" }) {
+  const { t } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -61,7 +63,7 @@ export default function ImageUploader({ onUpload, aspect = 1, label = "Upload Im
       formData.append('file', file);
 
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://localhost:8010/api/v1/upload/image', {
+      const response = await fetch('/api/v1/upload/image', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -113,7 +115,7 @@ export default function ImageUploader({ onUpload, aspect = 1, label = "Upload Im
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-maroon-100 dark:border-charcoal-800">
               <h3 className="font-display text-lg font-semibold text-maroon-900 dark:text-cream-50">
-                Crop & Adjust
+                {t('imageUploader.cropAdjust')}
               </h3>
               <button onClick={handleClose} className="text-maroon-400 hover:text-maroon-600 dark:hover:text-cream-100 transition-colors">
                 <X className="w-5 h-5" />
@@ -172,7 +174,7 @@ export default function ImageUploader({ onUpload, aspect = 1, label = "Upload Im
                   onClick={handleClose}
                   className="px-5 py-2 text-maroon-500 dark:text-charcoal-400 hover:text-maroon-700 dark:hover:text-cream-100 text-sm font-medium transition-colors"
                 >
-                  Cancel
+                  {t('imageUploader.cancel')}
                 </button>
                 <button
                   onClick={handleUpload}
@@ -180,7 +182,7 @@ export default function ImageUploader({ onUpload, aspect = 1, label = "Upload Im
                   className="flex items-center space-x-2 px-6 py-2 bg-maroon-700 dark:bg-gold-500 dark:text-charcoal-950 text-cream-50 rounded-full font-medium hover:bg-maroon-800 dark:hover:bg-gold-400 disabled:opacity-50 transition-all shadow-sm"
                 >
                   <Check className="w-4 h-4" />
-                  <span>{uploading ? 'Uploading...' : 'Upload'}</span>
+                  <span>{uploading ? t('imageUploader.uploading') : t('imageUploader.upload')}</span>
                 </button>
               </div>
             </div>

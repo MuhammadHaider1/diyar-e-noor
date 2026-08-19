@@ -6,10 +6,12 @@ import api from '../lib/api';
 import { PenTool, Trash2, Eye, Edit2, Plus, Clock, CheckCircle, XCircle, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import ImageUploader from '../components/ImageUploader';
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { categories } = useCategories();
   const [posts, setPosts] = useState([]);
@@ -44,17 +46,17 @@ export default function AdminDashboard() {
     try {
       if (editingPost) {
         await api.put(`/posts/${editingPost.id}`, formData);
-        toast.success('Post updated!');
+        toast.success(t('adminDashboard.postUpdated'));
       } else {
         await api.post('/posts', formData);
-        toast.success('Post created!');
+        toast.success(t('adminDashboard.postCreated'));
       }
       setShowEditor(false);
       setEditingPost(null);
       setFormData({ title: '', content: '', category: categories[0]?.slug || 'ishq', status: 'draft', cover_image_url: '' });
       fetchPosts();
     } catch (error) {
-      toast.error('Failed to save post');
+      toast.error(t('adminDashboard.saveFailed'));
     }
   };
 
@@ -71,13 +73,13 @@ export default function AdminDashboard() {
   };
 
   const handleDelete = async (postId) => {
-    if (!confirm('Are you sure you want to delete this post?')) return;
+    if (!confirm(t('adminDashboard.confirmDelete'))) return;
     try {
       await api.delete(`/posts/${postId}`);
-      toast.success('Post deleted');
+      toast.success(t('adminDashboard.postDeleted'));
       fetchPosts();
     } catch (error) {
-      toast.error('Failed to delete post');
+      toast.error(t('adminDashboard.deleteFailed'));
     }
   };
 
@@ -86,15 +88,15 @@ export default function AdminDashboard() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="font-display text-3xl font-bold text-maroon-900 dark:text-cream-50">Your Posts</h1>
-            <p className="text-maroon-600 dark:text-charcoal-400 mt-1">Manage your written contributions</p>
+            <h1 className="font-display text-3xl font-bold text-maroon-900 dark:text-cream-50">{t('adminDashboard.yourPosts')}</h1>
+            <p className="text-maroon-600 dark:text-charcoal-400 mt-1">{t('adminDashboard.managePosts')}</p>
           </div>
           <button
             onClick={() => { setEditingPost(null); setFormData({ title: '', content: '', category: categories[0]?.slug || 'ishq', status: 'draft', cover_image_url: '' }); setShowEditor(true); }}
             className="flex items-center space-x-2 bg-maroon-700 dark:bg-gold-500 dark:text-charcoal-950 text-cream-50 px-4 py-2 rounded-full hover:bg-maroon-800 dark:hover:bg-gold-400 transition-colors shadow-sm hover:shadow-md"
           >
             <Plus className="w-4 h-4" />
-            <span>New Post</span>
+            <span>{t('adminDashboard.newPost')}</span>
           </button>
         </div>
 
@@ -106,7 +108,7 @@ export default function AdminDashboard() {
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-display text-xl font-semibold text-maroon-900 dark:text-cream-50">
-                {editingPost ? 'Edit Post' : 'New Post'}
+                {editingPost ? t('adminDashboard.editPost') : t('adminDashboard.newPost')}
               </h2>
               <button onClick={() => setShowEditor(false)} className="text-maroon-400 dark:text-charcoal-600 hover:text-maroon-600 dark:hover:text-cream-100 transition-colors">
                 <XCircle className="w-6 h-6" />
@@ -118,7 +120,7 @@ export default function AdminDashboard() {
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Post title..."
+                placeholder={t('adminDashboard.postTitle')}
                 className="w-full px-4 py-3 dark-input rounded-xl focus:outline-none focus:ring-2 focus:ring-maroon-200 dark:focus:ring-gold-500/50 font-display text-lg"
               />
 
@@ -138,13 +140,13 @@ export default function AdminDashboard() {
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                   className="px-4 py-3 dark-input rounded-xl focus:outline-none focus:ring-2 focus:ring-maroon-200 dark:focus:ring-gold-500/50"
                 >
-                  <option value="draft">Draft</option>
-                  <option value="published">Published</option>
+                  <option value="draft">{t('adminDashboard.draft')}</option>
+                  <option value="published">{t('adminDashboard.published')}</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">Cover Image</label>
+                <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">{t('adminDashboard.coverImage')}</label>
                 {formData.cover_image_url ? (
                   <div className="relative">
                     <img src={formData.cover_image_url} alt="Cover" className="w-full h-40 object-cover rounded-xl" />
@@ -167,7 +169,7 @@ export default function AdminDashboard() {
               <textarea
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                placeholder="Write your post content (Markdown supported)..."
+                placeholder={t('adminDashboard.postContent')}
                 rows={12}
                 className="w-full px-4 py-3 dark-input rounded-xl focus:outline-none focus:ring-2 focus:ring-maroon-200 dark:focus:ring-gold-500/50 resize-none font-mono text-sm"
               />
@@ -177,14 +179,14 @@ export default function AdminDashboard() {
                   onClick={() => setShowEditor(false)}
                   className="px-6 py-2 border border-maroon-200 dark:border-charcoal-700 text-maroon-700 dark:text-charcoal-300 rounded-xl hover:bg-maroon-50 dark:hover:bg-charcoal-800 transition-colors"
                 >
-                  Cancel
+                  {t('adminDashboard.cancel')}
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={!formData.title || !formData.content}
                   className="px-6 py-2 bg-maroon-700 dark:bg-gold-500 dark:text-charcoal-950 text-cream-50 rounded-xl hover:bg-maroon-800 dark:hover:bg-gold-400 disabled:opacity-50 transition-colors shadow-sm"
                 >
-                  {editingPost ? 'Update' : 'Publish'}
+                  {editingPost ? t('adminDashboard.update') : t('adminDashboard.publish')}
                 </button>
               </div>
             </div>
@@ -243,7 +245,7 @@ export default function AdminDashboard() {
         ) : (
           <div className="text-center py-20 dark-card rounded-2xl">
             <PenTool className="w-12 h-12 text-maroon-300 dark:text-charcoal-700 mx-auto mb-4" />
-            <p className="text-maroon-500 dark:text-charcoal-400">No posts yet. Start writing!</p>
+            <p className="text-maroon-500 dark:text-charcoal-400">{t('adminDashboard.noPosts')}</p>
           </div>
         )}
       </div>

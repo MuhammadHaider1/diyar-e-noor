@@ -4,8 +4,10 @@ import { MessageCircle, Reply, Send } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import api from '../lib/api';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 function Comment({ comment, postId, onReply }) {
+  const { t } = useTranslation();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -60,7 +62,7 @@ function Comment({ comment, postId, onReply }) {
               className="flex items-center space-x-1 text-maroon-400 dark:text-charcoal-600 hover:text-maroon-600 dark:hover:text-gold-400 text-xs mt-2 transition-colors"
             >
               <Reply className="w-3 h-3" />
-              <span>Reply</span>
+              <span>{t('comments.reply')}</span>
             </button>
           )}
 
@@ -76,7 +78,7 @@ function Comment({ comment, postId, onReply }) {
                 <textarea
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
-                  placeholder="Write a reply..."
+                  placeholder={t('comments.writeReply')}
                   className="w-full p-3 dark-input rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-maroon-200 dark:focus:ring-gold-500/50 resize-none"
                   rows={2}
                 />
@@ -86,7 +88,7 @@ function Comment({ comment, postId, onReply }) {
                     onClick={() => setShowReplyForm(false)}
                     className="px-3 py-1 text-maroon-500 dark:text-charcoal-400 hover:text-maroon-700 dark:hover:text-cream-100 text-sm transition-colors"
                   >
-                    Cancel
+                    {t('comments.cancel')}
                   </button>
                   <button
                     type="submit"
@@ -94,7 +96,7 @@ function Comment({ comment, postId, onReply }) {
                     className="px-3 py-1 bg-maroon-600 dark:bg-gold-500 dark:text-charcoal-950 text-white rounded-lg text-sm hover:bg-maroon-700 dark:hover:bg-gold-400 disabled:opacity-50 flex items-center space-x-1 transition-colors"
                   >
                     <Send className="w-3 h-3" />
-                    <span>Reply</span>
+                    <span>{t('comments.reply')}</span>
                   </button>
                 </div>
               </motion.form>
@@ -120,6 +122,7 @@ function Comment({ comment, postId, onReply }) {
 }
 
 export default function Comments({ postId, comments, onCommentAdded }) {
+  const { t } = useTranslation();
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { user } = useAuth();
@@ -144,7 +147,7 @@ export default function Comments({ postId, comments, onCommentAdded }) {
     <div className="space-y-6">
       <h3 className="font-display text-xl font-semibold text-maroon-900 dark:text-cream-50 flex items-center space-x-2">
         <MessageCircle className="w-5 h-5" />
-        <span>Comments ({comments.length})</span>
+        <span>{t('comments.title')} ({comments.length})</span>
       </h3>
 
       {user ? (
@@ -152,7 +155,7 @@ export default function Comments({ postId, comments, onCommentAdded }) {
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Share your thoughts..."
+            placeholder={t('comments.shareThoughts')}
             className="w-full p-4 dark-card rounded-xl focus:outline-none focus:ring-2 focus:ring-maroon-200 dark:focus:ring-gold-500/50 resize-none"
             rows={3}
           />
@@ -163,14 +166,14 @@ export default function Comments({ postId, comments, onCommentAdded }) {
               className="px-6 py-2 bg-maroon-600 dark:bg-gold-500 dark:text-charcoal-950 text-cream-50 rounded-full font-medium hover:bg-maroon-700 dark:hover:bg-gold-400 disabled:opacity-50 transition-colors flex items-center space-x-2"
             >
               <Send className="w-4 h-4" />
-              <span>Post Comment</span>
+              <span>{t('comments.postComment')}</span>
             </button>
           </div>
         </form>
       ) : (
         <div className="bg-cream-100 dark:bg-charcoal-800 rounded-xl p-6 text-center">
           <p className="text-maroon-600 dark:text-charcoal-400">
-            <a href="/login" className="text-maroon-700 dark:text-gold-400 font-medium hover:underline">Login</a> to join the conversation
+            <a href="/login" className="text-maroon-700 dark:text-gold-400 font-medium hover:underline">Login</a> {t('comments.loginToJoin')}
           </p>
         </div>
       )}

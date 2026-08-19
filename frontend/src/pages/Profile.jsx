@@ -6,8 +6,10 @@ import { User, Mail, Calendar, Edit2, Save, X, Camera } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import ImageUploader from '../components/ImageUploader';
+import { useTranslation } from 'react-i18next';
 
 export default function Profile() {
+  const { t } = useTranslation();
   const { user, updateUser } = useAuth();
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,9 +34,9 @@ export default function Profile() {
     try {
       await updateUser(formData);
       setEditing(false);
-      toast.success('Profile updated!');
+      toast.success(t('profile.profileUpdated'));
     } catch (error) {
-      toast.error('Failed to update profile');
+      toast.error(t('profile.updateFailed'));
     } finally {
       setLoading(false);
     }
@@ -42,13 +44,13 @@ export default function Profile() {
 
   const handleAvatarUpload = (url) => {
     setFormData({ ...formData, avatar_url: url });
-    toast.success('Photo uploaded! Click Save to apply.');
+    toast.success(t('profile.photoUploaded'));
   };
 
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cream-50 dark:bg-charcoal-950">
-        <p className="text-maroon-500 dark:text-charcoal-400">Please login to view your profile</p>
+        <p className="text-maroon-500 dark:text-charcoal-400">{t('profile.pleaseLogin')}</p>
       </div>
     );
   }
@@ -85,7 +87,7 @@ export default function Profile() {
                   <ImageUploader
                     onUpload={handleAvatarUpload}
                     aspect={1}
-                    label="Change Photo"
+                    label={t('profile.changePhoto')}
                   />
                 )}
                 <button
@@ -93,14 +95,14 @@ export default function Profile() {
                   className="flex items-center space-x-2 px-4 py-2 bg-maroon-100 dark:bg-charcoal-800 text-maroon-700 dark:text-gold-400 rounded-full hover:bg-maroon-200 dark:hover:bg-charcoal-700 transition-colors"
                 >
                   {editing ? <Save className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
-                  <span>{editing ? 'Save' : 'Edit Profile'}</span>
+                  <span>{editing ? t('profile.save') : t('profile.editProfile')}</span>
                 </button>
               </div>
             </div>
 
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">Display Name</label>
+                <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">{t('profile.displayName')}</label>
                 {editing ? (
                   <input
                     type="text"

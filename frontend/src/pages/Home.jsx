@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { ArrowRight, Sparkles, BookOpen } from 'lucide-react';
 import { useCategories } from '../hooks/useCategories';
+import { useTranslation } from 'react-i18next';
 
 const colorStyles = {
   rose: {
@@ -52,6 +53,7 @@ const colorStyles = {
 const fallbackImage = 'https://images.unsplash.com/photo-1590012314607-cda9d9b699ae?w=800&q=80';
 
 function CategoryCard({ category, index }) {
+  const { t } = useTranslation();
   const isLeft = index % 2 === 0;
   const styles = colorStyles[category.color] || colorStyles.maroon;
 
@@ -67,7 +69,6 @@ function CategoryCard({ category, index }) {
         className={`group block rounded-[2rem] overflow-hidden border ${styles.border} ${styles.darkBorder} ${styles.hover} shadow-premium dark:shadow-premium-dark card-hover bg-white dark:bg-charcoal-900`}
       >
         <div className={`flex flex-col ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
-          {/* Image Side */}
           <div className="relative w-full md:w-[52%] h-64 sm:h-72 md:h-[26rem] overflow-hidden">
             <motion.img
               src={category.image_url || fallbackImage}
@@ -84,7 +85,6 @@ function CategoryCard({ category, index }) {
             )}
           </div>
 
-          {/* Text Side */}
           <div className={`w-full md:w-[48%] p-8 sm:p-10 md:p-12 flex flex-col justify-center bg-gradient-to-br ${styles.bgFrom} ${styles.bgTo} ${styles.darkBgFrom} ${styles.darkBgTo}`}>
             {category.subtitle && (
               <span className={`inline-flex items-center self-start px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase mb-4 ${styles.tag} ${styles.darkTag}`}>
@@ -104,7 +104,7 @@ function CategoryCard({ category, index }) {
 
             <div className="flex items-center text-maroon-800 dark:text-gold-400 font-semibold text-sm group-hover:text-maroon-900 transition-colors mt-auto">
               <span className="border-b-2 border-transparent group-hover:border-maroon-800 dark:group-hover:border-gold-400 transition-all duration-300">
-                Read Stories
+                {t('home.readStories')}
               </span>
               <motion.div
                 className="ml-2"
@@ -123,6 +123,7 @@ function CategoryCard({ category, index }) {
 
 export default function Home() {
   const { categories } = useCategories();
+  const { t } = useTranslation();
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -133,7 +134,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-cream-50 dark:bg-charcoal-950">
-      {/* Hero */}
       <section
         ref={heroRef}
         className="relative overflow-hidden bg-maroon-900 dark:bg-charcoal-900"
@@ -160,7 +160,7 @@ export default function Home() {
             className="inline-flex items-center space-x-2 bg-white/10 dark:bg-charcoal-800/50 backdrop-blur-md text-gold-300 px-5 py-2 rounded-full mb-8 border border-white/10 dark:border-charcoal-700/50"
           >
             <Sparkles className="w-4 h-4" />
-            <span className="text-sm font-medium tracking-wide">A Sanctuary for the Heart</span>
+            <span className="text-sm font-medium tracking-wide">{t('home.sanctuary')}</span>
           </motion.div>
 
           <motion.h1
@@ -180,7 +180,7 @@ export default function Home() {
             transition={{ duration: 0.7, delay: 0.3 }}
             className="font-display text-xl md:text-2xl text-gold-300/80 italic mb-6"
           >
-            Union of Beloveds
+            {t('home.union')}
           </motion.p>
 
           <motion.p
@@ -189,8 +189,7 @@ export default function Home() {
             transition={{ duration: 0.7, delay: 0.5 }}
             className="text-cream-100/50 max-w-2xl mx-auto mb-12 text-base md:text-lg leading-relaxed"
           >
-            A halal space for exploring Ishq, Mohabbat, and Pakeezgi — where hearts find
-            guidance in the light of sacred love.
+            {t('home.subtitle')}
           </motion.p>
 
           <motion.div
@@ -204,13 +203,13 @@ export default function Home() {
               className="btn-premium inline-flex items-center space-x-2 bg-gold-500 text-maroon-950 px-8 py-3.5 rounded-full font-semibold hover:bg-gold-400 transition-all shadow-lg hover:shadow-glow-gold hover:scale-[1.03]"
             >
               <BookOpen className="w-5 h-5" />
-              <span>Explore All Stories</span>
+              <span>{t('home.exploreAll')}</span>
             </Link>
             <Link
               to="/become-admin"
               className="inline-flex items-center space-x-2 bg-white/10 dark:bg-charcoal-800/50 backdrop-blur-sm text-cream-100 px-8 py-3.5 rounded-full font-medium border border-white/20 dark:border-charcoal-600/50 hover:bg-white/20 dark:hover:bg-charcoal-700/50 transition-all"
             >
-              <span>Write for Us</span>
+              <span>{t('home.writeForUs')}</span>
             </Link>
           </motion.div>
         </motion.div>
@@ -225,7 +224,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Category Cards */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -235,10 +233,10 @@ export default function Home() {
           className="text-center mb-14 md:mb-20"
         >
           <h2 className="font-display text-3xl md:text-4xl font-bold text-maroon-900 dark:text-cream-50 mb-4">
-            Explore Our World
+            {t('home.exploreWorld')}
           </h2>
           <p className="text-maroon-500/80 dark:text-charcoal-400 text-lg max-w-xl mx-auto leading-relaxed">
-            Each theme, a doorway to understanding love, purity, and faith.
+            {t('home.exploreDesc')}
           </p>
           <div className="gold-divider w-20 mx-auto mt-6" />
         </motion.div>
@@ -250,7 +248,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Bottom CTA */}
       <section className="relative overflow-hidden bg-maroon-800 dark:bg-charcoal-900">
         <div className="absolute inset-0 islamic-pattern opacity-10" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
@@ -261,16 +258,16 @@ export default function Home() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="font-display text-3xl md:text-4xl font-bold text-cream-50 mb-5">
-              Share Your Voice
+              {t('home.shareVoice')}
             </h2>
             <p className="text-cream-200/60 dark:text-charcoal-400 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-              Become an Admin and contribute your perspective on love, faith, and sacred relationships.
+              {t('home.shareVoiceDesc')}
             </p>
             <Link
               to="/become-admin"
               className="btn-premium inline-flex items-center space-x-2 bg-gold-500 text-maroon-950 px-8 py-3.5 rounded-full font-semibold hover:bg-gold-400 transition-all shadow-lg hover:shadow-glow-gold hover:scale-[1.03]"
             >
-              <span>Become an Admin</span>
+              <span>{t('home.becomeAdmin')}</span>
               <ArrowRight className="w-5 h-5" />
             </Link>
           </motion.div>

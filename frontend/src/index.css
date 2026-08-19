@@ -237,3 +237,44 @@
 .dark * {
   transition-duration: 400ms;
 }
+
+/* RTL Support for Urdu */
+html[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="rtl"] .ml-1 { margin-left: 0; margin-right: 0.25rem; }
+html[dir="rtl"] .ml-2 { margin-left: 0; margin-right: 0.5rem; }
+html[dir="rtl"] .mr-1 { margin-right: 0; margin-left: 0.25rem; }
+html[dir="rtl"] .mr-2 { margin-right: 0; margin-left: 0.5rem; }
+html[dir="rtl"] .pl-3 { padding-left: 0; padding-right: 0.75rem; }
+html[dir="rtl"] .pl-4 { padding-left: 0; padding-right: 1rem; }
+html[dir="rtl"] .pl-10 { padding-left: 0; padding-right: 2.5rem; }
+html[dir="rtl"] .pl-11 { padding-left: 0; padding-right: 2.75rem; }
+html[dir="rtl"] .pr-4 { padding-right: 0; padding-left: 1rem; }
+html[dir="rtl"] .pr-5 { padding-right: 0; padding-left: 1.25rem; }
+html[dir="rtl"] .space-x-1 > :not([hidden]) ~ :not([hidden]),
+html[dir="rtl"] .space-x-2 > :not([hidden]) ~ :not([hidden]),
+html[dir="rtl"] .space-x-3 > :not([hidden]) ~ :not([hidden]),
+html[dir="rtl"] .space-x-4 > :not([hidden]) ~ :not([hidden]),
+html[dir="rtl"] .space-x-6 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+html[dir="rtl"] .border-l-2 {
+  border-left: 0;
+  border-right: 2px solid;
+}
+
+html[dir="rtl"] .left-3 { left: auto; right: 0.75rem; }
+html[dir="rtl"] .right-2 { right: auto; left: 0.5rem; }
+html[dir="rtl"] .right-4 { right: auto; left: 1rem; }
+html[dir="rtl"] .left-4 { left: auto; right: 1rem; }
+html[dir="rtl"] .-translate-y-1\/2 { --tw-translate: translate(0, -50%); }
+
+html[dir="rtl"] .font-urdu,
+html[dir="rtl"] body {
+  font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif;
+  line-height: 2;
+}

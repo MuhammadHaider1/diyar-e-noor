@@ -5,6 +5,7 @@ import { useCategories } from '../hooks/useCategories';
 import api from '../lib/api';
 import { PenTool, Clock, CheckCircle, XCircle, Gift, Send, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 const statusConfig = {
   pending: { icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-900/20', border: 'border-amber-200 dark:border-amber-800/30', label: 'Under Review' },
@@ -13,6 +14,7 @@ const statusConfig = {
 };
 
 export default function BecomeAdmin() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { categories } = useCategories();
   const [myRequests, setMyRequests] = useState([]);
@@ -47,15 +49,15 @@ export default function BecomeAdmin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedCategories.length === 0) {
-      toast.error('Please select at least one category');
+      toast.error(t('becomeAdmin.selectAtLeast'));
       return;
     }
     if (!experience.trim()) {
-      toast.error('Please share your experience');
+      toast.error(t('becomeAdmin.shareExperience'));
       return;
     }
     if (!statement.trim()) {
-      toast.error('Please write a statement');
+      toast.error(t('becomeAdmin.writeStatement'));
       return;
     }
 
@@ -66,7 +68,7 @@ export default function BecomeAdmin() {
         experience,
         statement,
       });
-      toast.success('Request submitted! We\'ll review it shortly.');
+      toast.success(t('becomeAdmin.requestSubmitted'));
       setSelectedCategories([]);
       setExperience('');
       setStatement('');
@@ -94,9 +96,9 @@ export default function BecomeAdmin() {
           <div className="w-16 h-16 bg-maroon-100 dark:bg-charcoal-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <PenTool className="w-8 h-8 text-maroon-600 dark:text-gold-400" />
           </div>
-          <h1 className="font-display text-4xl font-bold text-maroon-900 dark:text-cream-50 mb-3">Become an Admin</h1>
+          <h1 className="font-display text-4xl font-bold text-maroon-900 dark:text-cream-50 mb-3">{t('becomeAdmin.title')}</h1>
           <p className="text-maroon-600 dark:text-charcoal-400 text-lg max-w-xl mx-auto">
-            Share your voice with the world. Write about the topics closest to your heart.
+            {t('becomeAdmin.subtitle')}
           </p>
         </motion.div>
 
@@ -113,11 +115,11 @@ export default function BecomeAdmin() {
             </div>
             <div>
               <h3 className="font-display text-lg font-semibold text-emerald-900 dark:text-emerald-300 mb-1">
-                Admin Slots Free — Limited Time!
+                {t('becomeAdmin.slotsFree')}
               </h3>
               <p className="text-emerald-700 dark:text-emerald-400/80 text-sm leading-relaxed">
-                All admin slots are completely free for users who join before <strong>1st October 2026</strong>.
-                No payment required — just submit your application and start writing.
+                {t('becomeAdmin.slotsDesc')} <strong>1st October 2026</strong>.
+                {t('becomeAdmin.slotsDesc2')}
               </p>
             </div>
           </div>
@@ -132,10 +134,10 @@ export default function BecomeAdmin() {
           >
             <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto mb-4" />
             <h3 className="font-display text-xl font-semibold text-emerald-900 dark:text-emerald-300 mb-2">
-              You're Already an Admin!
+              {t('becomeAdmin.alreadyAdmin')}
             </h3>
             <p className="text-emerald-700 dark:text-emerald-400/80">
-              Head to the <a href="/admin" className="font-medium underline">dashboard</a> to start writing.
+              {t('becomeAdmin.headToDashboard')} <a href="/admin" className="font-medium underline">{t('becomeAdmin.dashboard')}</a> {t('becomeAdmin.toStartWriting')}
             </p>
           </motion.div>
         )}
@@ -143,7 +145,7 @@ export default function BecomeAdmin() {
         {/* Previous Requests */}
         {!loading && myRequests.length > 0 && (
           <div className="space-y-4 mb-10">
-            <h2 className="font-display text-xl font-semibold text-maroon-900 dark:text-cream-50">Your Applications</h2>
+            <h2 className="font-display text-xl font-semibold text-maroon-900 dark:text-cream-50">{t('becomeAdmin.yourApplications')}</h2>
             {myRequests.map((req, i) => {
               const cfg = statusConfig[req.status];
               const Icon = cfg.icon;
@@ -166,11 +168,11 @@ export default function BecomeAdmin() {
                       </span>
                     </div>
                     <p className="text-maroon-600 dark:text-charcoal-400 text-sm">
-                      Categories: {req.categories.split(',').map(c => categories.find(ac => ac.slug === c)?.title || c).join(', ')}
+                      {t('becomeAdmin.categories')}: {req.categories.split(',').map(c => categories.find(ac => ac.slug === c)?.title || c).join(', ')}
                     </p>
                     {req.review_note && (
                       <p className="text-maroon-500 dark:text-charcoal-500 text-sm mt-2 italic">
-                        Note: {req.review_note}
+                        {t('becomeAdmin.note')}: {req.review_note}
                       </p>
                     )}
                   </div>
@@ -196,7 +198,7 @@ export default function BecomeAdmin() {
                     onClick={() => setShowForm(true)}
                     className="btn-premium bg-maroon-700 dark:bg-gold-500 dark:text-charcoal-950 text-cream-50 px-10 py-4 rounded-full font-semibold text-lg hover:bg-maroon-800 dark:hover:bg-gold-400 transition-all shadow-lg hover:shadow-glow-gold hover:scale-[1.02]"
                   >
-                    Apply Now — It's Free!
+                    {t('becomeAdmin.applyNow')}
                   </button>
                 </motion.div>
               ) : (
@@ -209,14 +211,14 @@ export default function BecomeAdmin() {
                   className="dark-card rounded-2xl shadow-premium dark:shadow-premium-dark p-8 space-y-8"
                 >
                   <div>
-                    <h3 className="font-display text-xl font-semibold text-maroon-900 dark:text-cream-50 mb-2">Your Application</h3>
-                    <p className="text-maroon-500 dark:text-charcoal-400 text-sm">Tell us about yourself and what you'd like to write about.</p>
+                    <h3 className="font-display text-xl font-semibold text-maroon-900 dark:text-cream-50 mb-2">{t('becomeAdmin.yourApplication')}</h3>
+                    <p className="text-maroon-500 dark:text-charcoal-400 text-sm">{t('becomeAdmin.tellUsAbout')}</p>
                   </div>
 
                   {/* Categories */}
                   <div>
                     <label className="block text-sm font-semibold text-maroon-800 dark:text-charcoal-200 mb-3">
-                      Which categories do you want to write about? *
+                      {t('becomeAdmin.selectCategories')}
                     </label>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       {categories.map((cat) => (
@@ -240,13 +242,13 @@ export default function BecomeAdmin() {
                   {/* Experience */}
                   <div>
                     <label className="block text-sm font-semibold text-maroon-800 dark:text-charcoal-200 mb-2">
-                      Your knowledge / experience *
+                      {t('becomeAdmin.experience')}
                     </label>
                     <textarea
                       value={experience}
                       onChange={(e) => setExperience(e.target.value)}
                       rows={4}
-                      placeholder="Tell us about your background, education, or personal experience with these topics..."
+                      placeholder={t('becomeAdmin.experiencePlaceholder')}
                       className="w-full px-4 py-3 dark-input rounded-xl focus:outline-none focus:ring-2 focus:ring-maroon-200 dark:focus:ring-gold-500/50 resize-none text-sm"
                     />
                   </div>
@@ -254,13 +256,13 @@ export default function BecomeAdmin() {
                   {/* Statement */}
                   <div>
                     <label className="block text-sm font-semibold text-maroon-800 dark:text-charcoal-200 mb-2">
-                      Why do you want to be an admin? *
+                      {t('becomeAdmin.whyAdmin')}
                     </label>
                     <textarea
                       value={statement}
                       onChange={(e) => setStatement(e.target.value)}
                       rows={4}
-                      placeholder="What motivates you to write for DIYAR E NOOR? What unique perspective do you bring?"
+                      placeholder={t('becomeAdmin.whyAdminPlaceholder')}
                       className="w-full px-4 py-3 dark-input rounded-xl focus:outline-none focus:ring-2 focus:ring-maroon-200 dark:focus:ring-gold-500/50 resize-none text-sm"
                     />
                   </div>
@@ -271,7 +273,7 @@ export default function BecomeAdmin() {
                       onClick={() => setShowForm(false)}
                       className="text-maroon-500 dark:text-charcoal-400 hover:text-maroon-700 dark:hover:text-cream-100 font-medium text-sm transition-colors"
                     >
-                      Cancel
+                      {t('becomeAdmin.cancel')}
                     </button>
                     <button
                       type="submit"
@@ -279,7 +281,7 @@ export default function BecomeAdmin() {
                       className="flex items-center space-x-2 bg-maroon-700 dark:bg-gold-500 dark:text-charcoal-950 text-cream-50 px-8 py-3 rounded-full font-semibold hover:bg-maroon-800 dark:hover:bg-gold-400 disabled:opacity-50 transition-all shadow-sm hover:shadow-md"
                     >
                       <Send className="w-4 h-4" />
-                      <span>{submitting ? 'Submitting...' : 'Submit Application'}</span>
+                      <span>{submitting ? t('becomeAdmin.submitting') : t('becomeAdmin.submitApplication')}</span>
                     </button>
                   </div>
                 </motion.form>
@@ -297,10 +299,10 @@ export default function BecomeAdmin() {
           >
             <Clock className="w-12 h-12 text-amber-500 mx-auto mb-4" />
             <h3 className="font-display text-xl font-semibold text-amber-900 dark:text-amber-300 mb-2">
-              Application Under Review
+              {t('becomeAdmin.underReview')}
             </h3>
             <p className="text-amber-700 dark:text-amber-400/80">
-              We're reviewing your application. You'll be notified once a decision is made.
+              {t('becomeAdmin.reviewingText')}
             </p>
           </motion.div>
         )}

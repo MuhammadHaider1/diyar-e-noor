@@ -7,6 +7,7 @@ import { Shield, Users, CreditCard, CheckCircle, XCircle, Clock, FileText, Folde
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import ImageUploader from '../components/ImageUploader';
+import { useTranslation } from 'react-i18next';
 
 const colorOptions = [
   { value: 'rose', label: 'Rose', class: 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300' },
@@ -37,6 +38,7 @@ const emptyCategory = {
 };
 
 export default function SuperAdminDashboard() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { categories, fetchCategories } = useCategories();
   const [requests, setRequests] = useState([]);
@@ -80,23 +82,23 @@ export default function SuperAdminDashboard() {
         status: newStatus,
         review_note: reviewNote || null,
       });
-      toast.success(newStatus === 'approved' ? 'Admin approved!' : 'Request rejected');
+      toast.success(newStatus === 'approved' ? t('superAdmin.adminApproved') : t('superAdmin.requestRejected'));
       setReviewingId(null);
       setReviewNote('');
       fetchData();
     } catch (error) {
-      toast.error('Failed to review request');
+      toast.error(t('superAdmin.reviewFailed'));
     }
   };
 
   const handleCatSave = async () => {
     if (!catForm.slug.trim() || !catForm.title.trim()) {
-      toast.error('Slug and title are required');
+      toast.error(t('superAdmin.slugRequired'));
       return;
     }
     const slugRegex = /^[a-z0-9-]+$/;
     if (!slugRegex.test(catForm.slug)) {
-      toast.error('Slug must be lowercase letters, numbers, and dashes only');
+      toast.error(t('superAdmin.slugInvalid'));
       return;
     }
 
@@ -104,10 +106,10 @@ export default function SuperAdminDashboard() {
     try {
       if (editingCatId) {
         await api.put(`/categories/${editingCatId}`, catForm);
-        toast.success('Category updated');
+        toast.success(t('superAdmin.categoryUpdated'));
       } else {
         await api.post('/categories', catForm);
-        toast.success('Category created');
+        toast.success(t('superAdmin.categoryCreated'));
       }
       setShowCatForm(false);
       setEditingCatId(null);
@@ -127,10 +129,10 @@ export default function SuperAdminDashboard() {
   };
 
   const handleCatDelete = async (catId) => {
-    if (!confirm('Delete this category? This cannot be undone.')) return;
+    if (!confirm(t('superAdmin.confirmDelete'))) return;
     try {
       await api.delete(`/categories/${catId}`);
-      toast.success('Category deleted');
+      toast.success(t('superAdmin.categoryDeleted'));
       fetchCategories();
     } catch (error) {
       toast.error('Failed to delete category');
@@ -164,7 +166,7 @@ export default function SuperAdminDashboard() {
   if (user?.role !== 'super_admin') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cream-50 dark:bg-charcoal-950">
-        <p className="text-maroon-500 dark:text-charcoal-400">Access denied. Super Admin only.</p>
+        <p className="text-maroon-500 dark:text-charcoal-400">{t('superAdmin.accessDenied')}</p>
       </div>
     );
   }
@@ -178,18 +180,18 @@ export default function SuperAdminDashboard() {
         <div className="flex items-center space-x-3 mb-8">
           <Shield className="w-8 h-8 text-maroon-700 dark:text-gold-400" />
           <div>
-            <h1 className="font-display text-3xl font-bold text-maroon-900 dark:text-cream-50">Super Admin</h1>
-            <p className="text-maroon-600 dark:text-charcoal-400">Manage admins, categories, requests & payments</p>
+            <h1 className="font-display text-3xl font-bold text-maroon-900 dark:text-cream-50">{t('superAdmin.title')}</h1>
+            <p className="text-maroon-600 dark:text-charcoal-400">{t('superAdmin.subtitle')}</p>
           </div>
         </div>
 
         {/* Tabs */}
         <div className="flex space-x-3 mb-8 overflow-x-auto pb-1">
           {[
-            { id: 'requests', label: 'Admin Requests', icon: FileText, count: pendingCount },
-            { id: 'categories', label: 'Categories', icon: FolderOpen, count: categories.length },
-            { id: 'admins', label: 'Admins', icon: Users, count: admins.length },
-            { id: 'payments', label: 'Payments', icon: CreditCard, count: payments.length },
+            { id: 'requests', label: t('superAdmin.adminRequests'), icon: FileText, count: pendingCount },
+            { id: 'categories', label: t('superAdmin.categoriesTab'), icon: FolderOpen, count: categories.length },
+            { id: 'admins', label: t('superAdmin.adminsTab'), icon: Users, count: admins.length },
+            { id: 'payments', label: t('superAdmin.paymentsTab'), icon: CreditCard, count: payments.length },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -231,7 +233,7 @@ export default function SuperAdminDashboard() {
                 {requests.length === 0 ? (
                   <div className="dark-card rounded-2xl p-12 text-center">
                     <FileText className="w-12 h-12 text-maroon-300 dark:text-charcoal-700 mx-auto mb-4" />
-                    <p className="text-maroon-500 dark:text-charcoal-400">No applications yet</p>
+                    <p className="text-maroon-500 dark:text-charcoal-400">{t('superAdmin.noApplications')}</p>
                   </div>
                 ) : (
                   requests.map((req) => (
@@ -312,13 +314,13 @@ export default function SuperAdminDashboard() {
                                         onClick={() => handleReview(req.id, 'approved')}
                                         className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors"
                                       >
-                                        Approve
+                                        {t('superAdmin.approve')}
                                       </button>
                                       <button
                                         onClick={() => handleReview(req.id, 'rejected')}
                                         className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
                                       >
-                                        Reject
+                                        {t('superAdmin.reject')}
                                       </button>
                                       <button
                                         onClick={() => { setReviewingId(null); setReviewNote(''); }}
@@ -362,7 +364,7 @@ export default function SuperAdminDashboard() {
                     className="flex items-center space-x-2 bg-maroon-700 dark:bg-gold-500 dark:text-charcoal-950 text-cream-50 px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-maroon-800 dark:hover:bg-gold-400 transition-colors shadow-sm"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>Add Category</span>
+                    <span>{t('superAdmin.addCategory')}</span>
                   </button>
                 </div>
 
@@ -377,7 +379,7 @@ export default function SuperAdminDashboard() {
                       <div className="dark-card rounded-2xl border border-maroon-100 dark:border-charcoal-700 p-6 space-y-5">
                         <div className="flex items-center justify-between">
                           <h3 className="font-display text-lg font-semibold text-maroon-900 dark:text-cream-50">
-                            {editingCatId ? 'Edit Category' : 'New Category'}
+                            {editingCatId ? t('superAdmin.editCategory') : t('superAdmin.newCategory')}
                           </h3>
                           <button onClick={() => { setShowCatForm(false); setEditingCatId(null); }} className="text-maroon-400 dark:text-charcoal-600 hover:text-maroon-600 dark:hover:text-cream-100 transition-colors">
                             <X className="w-5 h-5" />
@@ -386,7 +388,7 @@ export default function SuperAdminDashboard() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">Slug *</label>
+                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">{t('superAdmin.slug')} *</label>
                             <input
                               type="text"
                               value={catForm.slug}
@@ -396,7 +398,7 @@ export default function SuperAdminDashboard() {
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">Title *</label>
+                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">{t('superAdmin.title2')} *</label>
                             <input
                               type="text"
                               value={catForm.title}
@@ -406,7 +408,7 @@ export default function SuperAdminDashboard() {
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">Subtitle</label>
+                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">{t('superAdmin.subtitle2')}</label>
                             <input
                               type="text"
                               value={catForm.subtitle}
@@ -416,7 +418,7 @@ export default function SuperAdminDashboard() {
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">Icon (emoji)</label>
+                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">{t('superAdmin.icon')}</label>
                             <input
                               type="text"
                               value={catForm.icon}
@@ -426,7 +428,7 @@ export default function SuperAdminDashboard() {
                             />
                           </div>
                           <div className="md:col-span-2">
-                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">Description</label>
+                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">{t('superAdmin.description')}</label>
                             <textarea
                               value={catForm.description}
                               onChange={(e) => setCatForm({ ...catForm, description: e.target.value })}
@@ -436,7 +438,7 @@ export default function SuperAdminDashboard() {
                             />
                           </div>
                           <div className="md:col-span-2">
-                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">Image</label>
+                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">{t('superAdmin.image')}</label>
                             {catForm.image_url ? (
                               <div className="relative">
                                 <img src={catForm.image_url} alt="Category" className="w-full h-32 object-cover rounded-lg" />
@@ -456,7 +458,7 @@ export default function SuperAdminDashboard() {
                             )}
                           </div>
                           <div>
-                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-2">Color Theme</label>
+                            <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-2">{t('superAdmin.colorTheme')}</label>
                             <div className="flex flex-wrap gap-2">
                               {colorOptions.map((c) => (
                                 <button
@@ -475,7 +477,7 @@ export default function SuperAdminDashboard() {
 
                         {catForm.title && (
                           <div className="border-t border-maroon-50 dark:border-charcoal-800 pt-4">
-                            <p className="text-xs font-semibold text-maroon-500 dark:text-charcoal-500 uppercase tracking-wider mb-2">Preview</p>
+                            <p className="text-xs font-semibold text-maroon-500 dark:text-charcoal-500 uppercase tracking-wider mb-2">{t('superAdmin.preview')}</p>
                             <div className="flex items-center gap-3 p-3 bg-cream-50 dark:bg-charcoal-800 rounded-xl">
                               {catForm.icon && <span className="text-2xl">{catForm.icon}</span>}
                               <div>
@@ -493,7 +495,7 @@ export default function SuperAdminDashboard() {
                             onClick={() => { setShowCatForm(false); setEditingCatId(null); }}
                             className="px-4 py-2 text-maroon-500 dark:text-charcoal-400 hover:text-maroon-700 dark:hover:text-cream-100 text-sm font-medium transition-colors"
                           >
-                            Cancel
+                            {t('superAdmin.cancel')}
                           </button>
                           <button
                             onClick={handleCatSave}
@@ -501,7 +503,7 @@ export default function SuperAdminDashboard() {
                             className="flex items-center space-x-2 bg-maroon-700 dark:bg-gold-500 dark:text-charcoal-950 text-cream-50 px-6 py-2 rounded-lg text-sm font-medium hover:bg-maroon-800 dark:hover:bg-gold-400 disabled:opacity-50 transition-colors shadow-sm"
                           >
                             <Save className="w-4 h-4" />
-                            <span>{catSaving ? 'Saving...' : editingCatId ? 'Update' : 'Create'}</span>
+                            <span>{catSaving ? t('superAdmin.saving') : editingCatId ? t('superAdmin.update') : t('superAdmin.create')}</span>
                           </button>
                         </div>
                       </div>
@@ -512,7 +514,7 @@ export default function SuperAdminDashboard() {
                 {sortedCats.length === 0 ? (
                   <div className="dark-card rounded-2xl p-12 text-center">
                     <FolderOpen className="w-12 h-12 text-maroon-300 dark:text-charcoal-700 mx-auto mb-4" />
-                    <p className="text-maroon-500 dark:text-charcoal-400">No categories yet. Create one to get started.</p>
+                    <p className="text-maroon-500 dark:text-charcoal-400">{t('superAdmin.noCategories')}</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -540,7 +542,7 @@ export default function SuperAdminDashboard() {
                               {cat.color}
                             </span>
                             {!cat.is_active && (
-                              <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-charcoal-800 text-gray-500 dark:text-charcoal-500">Hidden</span>
+                              <span className="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-charcoal-800 text-gray-500 dark:text-charcoal-500">{t('superAdmin.hidden')}</span>
                             )}
                           </div>
                           <p className="text-maroon-400 dark:text-charcoal-600 text-xs mt-0.5">
@@ -554,7 +556,7 @@ export default function SuperAdminDashboard() {
                             onClick={() => handleMoveCategory(cat.id, 'up')}
                             disabled={i === 0}
                             className="p-1.5 rounded-lg hover:bg-maroon-50 dark:hover:bg-charcoal-800 text-maroon-400 dark:text-charcoal-600 hover:text-maroon-600 dark:hover:text-gold-400 disabled:opacity-30 transition-colors"
-                            title="Move up"
+                            title={t('superAdmin.moveUp')}
                           >
                             <ArrowUp className="w-4 h-4" />
                           </button>
@@ -562,28 +564,28 @@ export default function SuperAdminDashboard() {
                             onClick={() => handleMoveCategory(cat.id, 'down')}
                             disabled={i === sortedCats.length - 1}
                             className="p-1.5 rounded-lg hover:bg-maroon-50 dark:hover:bg-charcoal-800 text-maroon-400 dark:text-charcoal-600 hover:text-maroon-600 dark:hover:text-gold-400 disabled:opacity-30 transition-colors"
-                            title="Move down"
+                            title={t('superAdmin.moveDown')}
                           >
                             <ArrowDown className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleCatToggle(cat.id)}
                             className="p-1.5 rounded-lg hover:bg-maroon-50 dark:hover:bg-charcoal-800 text-maroon-400 dark:text-charcoal-600 hover:text-maroon-600 dark:hover:text-gold-400 transition-colors"
-                            title={cat.is_active ? 'Hide' : 'Show'}
+                            title={cat.is_active ? t('superAdmin.hide') : t('superAdmin.show')}
                           >
                             {cat.is_active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                           </button>
                           <button
                             onClick={() => handleCatEdit(cat)}
                             className="p-1.5 rounded-lg hover:bg-maroon-50 dark:hover:bg-charcoal-800 text-maroon-400 dark:text-charcoal-600 hover:text-maroon-600 dark:hover:text-gold-400 transition-colors"
-                            title="Edit"
+                            title={t('superAdmin.edit')}
                           >
                             <Edit3 className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleCatDelete(cat.id)}
                             className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-maroon-400 hover:text-red-500 transition-colors"
-                            title="Delete"
+                            title={t('superAdmin.delete')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -607,7 +609,7 @@ export default function SuperAdminDashboard() {
                 {admins.length === 0 ? (
                   <div className="dark-card rounded-2xl p-12 text-center">
                     <Users className="w-12 h-12 text-maroon-300 dark:text-charcoal-700 mx-auto mb-4" />
-                    <p className="text-maroon-500 dark:text-charcoal-400">No admins yet</p>
+                    <p className="text-maroon-500 dark:text-charcoal-400">{t('superAdmin.noAdmins')}</p>
                   </div>
                 ) : (
                   admins.map((admin) => (
@@ -622,7 +624,7 @@ export default function SuperAdminDashboard() {
                         </div>
                       </div>
                       <span className="px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-full text-xs font-medium border border-emerald-200 dark:border-emerald-800/30">
-                        Active
+                        {t('superAdmin.active')}
                       </span>
                     </div>
                   ))
@@ -642,7 +644,7 @@ export default function SuperAdminDashboard() {
                 {payments.length === 0 ? (
                   <div className="dark-card rounded-2xl p-12 text-center">
                     <CreditCard className="w-12 h-12 text-maroon-300 dark:text-charcoal-700 mx-auto mb-4" />
-                    <p className="text-maroon-500 dark:text-charcoal-400">No payments yet</p>
+                    <p className="text-maroon-500 dark:text-charcoal-400">{t('superAdmin.noPayments')}</p>
                   </div>
                 ) : (
                   payments.map((payment) => (

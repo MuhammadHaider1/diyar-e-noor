@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import api from '../lib/api';
 import PostCard from '../components/PostCard';
 import { useCategories } from '../hooks/useCategories';
 import { Search, Filter, ArrowLeft, BookOpen } from 'lucide-react';
 
 export default function Categories() {
+  const { t } = useTranslation();
   const { categories, loading: catLoading } = useCategories();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,7 +69,7 @@ export default function Categories() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-16">
           <Link to="/" className="inline-flex items-center space-x-2 text-cream-200/50 hover:text-cream-100 transition-colors mb-6">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back to Home</span>
+            <span className="text-sm">{t('categories.backToHome')}</span>
           </Link>
 
           <motion.div
@@ -76,10 +78,10 @@ export default function Categories() {
             transition={{ duration: 0.5 }}
           >
             <h1 className="font-display text-3xl md:text-5xl font-bold text-cream-50 mb-3">
-              {activeCat?.title || 'All Topics'}
+              {activeCat?.title || t('categories.allTopics')}
             </h1>
             <p className="text-cream-200/50 dark:text-charcoal-400 text-base md:text-lg max-w-xl">
-              {activeCat?.description || 'Explore all our content across every theme.'}
+              {activeCat?.description || t('home.exploreDesc')}
             </p>
           </motion.div>
         </div>
@@ -104,7 +106,7 @@ export default function Categories() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search posts..."
+                placeholder={t('categories.searchPlaceholder')}
                 className="w-full pl-11 pr-4 py-2.5 dark-card rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-maroon-200 dark:focus:ring-gold-500/50 transition-shadow"
               />
             </div>
@@ -120,7 +122,7 @@ export default function Categories() {
                   : 'dark-card text-maroon-600 dark:text-charcoal-300 hover:bg-maroon-50 dark:hover:bg-charcoal-800 border border-maroon-100 dark:border-charcoal-700'
               }`}
             >
-              All Topics
+              {t('categories.allTopics')}
             </button>
             {categories.map((cat) => (
               <button
@@ -160,8 +162,8 @@ export default function Categories() {
             <div className="w-16 h-16 bg-maroon-50 dark:bg-charcoal-800 rounded-full flex items-center justify-center mx-auto mb-5">
               <BookOpen className="w-7 h-7 text-maroon-300 dark:text-charcoal-600" />
             </div>
-            <p className="text-maroon-500 dark:text-charcoal-400 text-lg">No posts yet in this category.</p>
-            <p className="text-maroon-400 dark:text-charcoal-600 text-sm mt-1">Check back soon for new content.</p>
+            <p className="text-maroon-500 dark:text-charcoal-400 text-lg">{t('categories.noPosts')}</p>
+            <p className="text-maroon-400 dark:text-charcoal-600 text-sm mt-1">{t('categories.checkBack')}</p>
           </motion.div>
         )}
       </div>

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { Heart, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -11,6 +12,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,10 +20,10 @@ export default function Login() {
     
     try {
       await login(email, password);
-      toast.success('Welcome back!');
+      toast.success(t('login.welcomeBackToast'));
       navigate('/');
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Invalid credentials');
+      toast.error(error.response?.data?.detail || t('login.invalidCredentials'));
     } finally {
       setLoading(false);
     }
@@ -40,13 +42,13 @@ export default function Login() {
             <Heart className="w-8 h-8 text-maroon-600 dark:text-gold-500" />
             <span className="font-display text-2xl font-bold tracking-widest text-maroon-800 dark:text-cream-100 uppercase">Diyar<span className="font-script text-3xl mx-0.5 text-gold-500">e</span>Noor</span>
           </Link>
-          <h2 className="font-display text-2xl font-semibold text-maroon-900 dark:text-cream-50">Welcome Back</h2>
-          <p className="text-maroon-600 dark:text-charcoal-400 mt-2">Continue your journey of sacred love</p>
+          <h2 className="font-display text-2xl font-semibold text-maroon-900 dark:text-cream-50">{t('login.welcomeBack')}</h2>
+          <p className="text-maroon-600 dark:text-charcoal-400 mt-2">{t('login.continueJourney')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="dark-card rounded-2xl shadow-premium dark:shadow-premium-dark p-8 space-y-6">
           <div>
-            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">Email</label>
+            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">{t('login.email')}</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-maroon-400 dark:text-charcoal-600" />
               <input
@@ -61,7 +63,7 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">Password</label>
+            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">{t('login.password')}</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-maroon-400 dark:text-charcoal-600" />
               <input
@@ -80,13 +82,13 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-maroon-700 dark:bg-gold-500 dark:text-charcoal-950 text-cream-50 py-3 rounded-xl font-medium hover:bg-maroon-800 dark:hover:bg-gold-400 transition-all disabled:opacity-50 shadow-sm hover:shadow-md"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? t('login.signingIn') : t('login.signIn')}
           </button>
 
           <p className="text-center text-maroon-600 dark:text-charcoal-400 text-sm">
-            Don't have an account?{' '}
+            {t('login.noAccount')}{' '}
             <Link to="/register" className="text-maroon-700 dark:text-gold-400 font-medium hover:underline">
-              Register
+              {t('login.register')}
             </Link>
           </p>
         </form>

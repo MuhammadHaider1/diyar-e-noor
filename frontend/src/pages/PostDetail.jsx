@@ -8,6 +8,7 @@ import LikeButton from '../components/LikeButton';
 import Comments from '../components/Comments';
 import { useCategories } from '../hooks/useCategories';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 export default function PostDetail() {
   const { slug } = useParams();
@@ -15,6 +16,7 @@ export default function PostDetail() {
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   const slugMap = {};
   categories.forEach(c => { slugMap[c.slug] = c; });
@@ -40,7 +42,7 @@ export default function PostDetail() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cream-50 dark:bg-charcoal-950">
-        <div className="animate-pulse text-maroon-500 dark:text-gold-400 font-display text-lg">Loading...</div>
+        <div className="animate-pulse text-maroon-500 dark:text-gold-400 font-display text-lg">{t('postDetail.loading')}</div>
       </div>
     );
   }
@@ -48,7 +50,7 @@ export default function PostDetail() {
   if (!post) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cream-50 dark:bg-charcoal-950">
-        <p className="text-maroon-500 dark:text-charcoal-400">Post not found</p>
+        <p className="text-maroon-500 dark:text-charcoal-400">{t('postDetail.notFound')}</p>
       </div>
     );
   }
@@ -66,7 +68,7 @@ export default function PostDetail() {
             className="inline-flex items-center space-x-2 text-maroon-600 dark:text-charcoal-400 hover:text-maroon-800 dark:hover:text-gold-400 mb-8 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Back to posts</span>
+            <span>{t('postDetail.backToPosts')}</span>
           </Link>
 
           <div className="mb-6">
@@ -94,7 +96,7 @@ export default function PostDetail() {
             </span>
             <span className="flex items-center space-x-2">
               <Eye className="w-4 h-4" />
-              <span>{post.views_count} views</span>
+              <span>{`${post.views_count} ${t('postDetail.views')}`}</span>
             </span>
           </div>
 

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { Heart, Mail, Lock, User } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,10 +28,10 @@ export default function Register() {
     
     try {
       await register(formData.username, formData.email, formData.password, formData.display_name);
-      toast.success('Account created! Please login.');
+      toast.success(t('register.accountCreated'));
       navigate('/login');
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Registration failed');
+      toast.error(error.response?.data?.detail || t('register.regFailed'));
     } finally {
       setLoading(false);
     }
@@ -48,13 +50,13 @@ export default function Register() {
             <Heart className="w-8 h-8 text-maroon-600 dark:text-gold-500" />
             <span className="font-display text-2xl font-bold tracking-widest text-maroon-800 dark:text-cream-100 uppercase">Diyar<span className="font-script text-3xl mx-0.5 text-gold-500">e</span>Noor</span>
           </Link>
-          <h2 className="font-display text-2xl font-semibold text-maroon-900 dark:text-cream-50">Join DIYAR E NOOR</h2>
-          <p className="text-maroon-600 dark:text-charcoal-400 mt-2">Begin your journey of sacred love</p>
+          <h2 className="font-display text-2xl font-semibold text-maroon-900 dark:text-cream-50">{t('register.title')}</h2>
+          <p className="text-maroon-600 dark:text-charcoal-400 mt-2">{t('register.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="dark-card rounded-2xl shadow-premium dark:shadow-premium-dark p-8 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">Username</label>
+            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">{t('register.username')}</label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-maroon-400 dark:text-charcoal-600" />
               <input
@@ -70,7 +72,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">Display Name</label>
+            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">{t('register.displayName')}</label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-maroon-400 dark:text-charcoal-600" />
               <input
@@ -85,7 +87,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">Email</label>
+            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">{t('register.email')}</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-maroon-400 dark:text-charcoal-600" />
               <input
@@ -101,7 +103,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">Password</label>
+            <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">{t('register.password')}</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-maroon-400 dark:text-charcoal-600" />
               <input
@@ -122,13 +124,13 @@ export default function Register() {
             disabled={loading}
             className="w-full bg-maroon-700 dark:bg-gold-500 dark:text-charcoal-950 text-cream-50 py-3 rounded-xl font-medium hover:bg-maroon-800 dark:hover:bg-gold-400 transition-all disabled:opacity-50 shadow-sm hover:shadow-md"
           >
-            {loading ? 'Creating account...' : 'Create Account'}
+            {loading ? t('register.creatingAccount') : t('register.createAccount')}
           </button>
 
           <p className="text-center text-maroon-600 dark:text-charcoal-400 text-sm">
-            Already have an account?{' '}
+            {t('register.hasAccount')}{' '}
             <Link to="/login" className="text-maroon-700 dark:text-gold-400 font-medium hover:underline">
-              Sign in
+              {t('register.signIn')}
             </Link>
           </p>
         </form>
