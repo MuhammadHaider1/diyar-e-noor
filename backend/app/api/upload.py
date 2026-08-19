@@ -37,5 +37,5 @@ async def upload_image(
     with open(filepath, "wb") as f:
         f.write(contents)
 
-    url = f"http://localhost:8010/uploads/{filename}"
+    url = f"/uploads/{filename}"
     return {"url": url, "filename": filename}
