@@ -27,13 +27,13 @@ export default function AdminDashboard() {
   });
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    if (user) fetchPosts();
+  }, [user]);
 
   const fetchPosts = async () => {
     try {
       const response = await api.get('/posts', { params: { status: null } });
-      const myPosts = response.data.items.filter(p => p.admin_id === user.id);
+      const myPosts = response.data.items.filter(p => p.admin_id === user?.id);
       setPosts(myPosts);
     } catch (error) {
       console.error('Failed to fetch posts:', error);

@@ -15,6 +15,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import BecomeAdmin from './pages/BecomeAdmin';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import Categories from './pages/Categories';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const queryClient = new QueryClient();
 
@@ -28,7 +29,8 @@ function App() {
               <div className="min-h-screen flex flex-col bg-cream-50 dark:bg-charcoal-950 transition-colors duration-400">
                 <Navbar />
                 <main className="flex-1">
-                  <Routes>
+                  <ErrorBoundary>
+                    <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/categories" element={<Categories />} />
                     <Route path="/login" element={<Login />} />
@@ -38,7 +40,8 @@ function App() {
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/become-admin" element={<BecomeAdmin />} />
                     <Route path="/superadmin" element={<SuperAdminDashboard />} />
-                  </Routes>
+                    </Routes>
+                  </ErrorBoundary>
                 </main>
                 <Footer />
               </div>

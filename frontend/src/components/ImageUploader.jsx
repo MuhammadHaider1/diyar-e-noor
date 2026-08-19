@@ -2,27 +2,35 @@ import { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
 import { Upload, X, Check, ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 function getCroppedImg(imageSrc, pixelCrop) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const image = new Image();
+    image.crossOrigin = 'anonymous';
     image.src = imageSrc;
     image.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = pixelCrop.width;
-      canvas.height = pixelCrop.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(
-        image,
-        pixelCrop.x, pixelCrop.y,
-        pixelCrop.width, pixelCrop.height,
-        0, 0,
-        pixelCrop.width, pixelCrop.height
-      );
-      canvas.toBlob((blob) => {
-        resolve(blob);
-      }, 'image/jpeg', 0.9);
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = pixelCrop.width;
+        canvas.height = pixelCrop.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(
+          image,
+          pixelCrop.x, pixelCrop.y,
+          pixelCrop.width, pixelCrop.height,
+          0, 0,
+          pixelCrop.width, pixelCrop.height
+        );
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Failed to create image blob'));
+        }, 'image/jpeg', 0.9);
+      } catch (err) {
+        reject(err);
+      }
     };
+    image.onerror = () => reject(new Error('Failed to load image'));
   });
 }
 
@@ -81,6 +89,7 @@ export default function ImageUploader({ onUpload, aspect = 1, label = "Upload Im
       setRotation(0);
     } catch (error) {
       console.error('Upload failed:', error);
+      toast.error(error.message || 'Upload failed');
     } finally {
       setUploading(false);
     }
