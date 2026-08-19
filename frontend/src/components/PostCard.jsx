@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, MessageCircle, Eye } from 'lucide-react';
 import { useCategories } from '../hooks/useCategories';
+import { getUploadUrl } from '../lib/api';
 
 export default function PostCard({ post, index }) {
   const { categories, getColorClasses } = useCategories();
@@ -23,7 +24,7 @@ export default function PostCard({ post, index }) {
           {post.cover_image_url && (
             <div className="aspect-[16/10] overflow-hidden">
               <img
-                src={post.cover_image_url}
+                src={getUploadUrl(post.cover_image_url)}
                 alt={post.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />

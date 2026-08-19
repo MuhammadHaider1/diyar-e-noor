@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Eye, User } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import api from '../lib/api';
+import api, { getUploadUrl } from '../lib/api';
 import LikeButton from '../components/LikeButton';
 import Comments from '../components/Comments';
 import { useCategories } from '../hooks/useCategories';
@@ -103,7 +103,7 @@ export default function PostDetail() {
           {post.cover_image_url && (
             <div className="mb-10 rounded-2xl overflow-hidden shadow-premium-lg dark:shadow-premium-dark">
               <img
-                src={post.cover_image_url}
+                src={getUploadUrl(post.cover_image_url)}
                 alt={post.title}
                 className="w-full h-auto object-cover"
               />

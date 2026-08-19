@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { useCategories } from '../hooks/useCategories';
-import api from '../lib/api';
+import api, { getUploadUrl } from '../lib/api';
 import { Shield, Users, CreditCard, CheckCircle, XCircle, Clock, FileText, FolderOpen, Plus, GripVertical, Eye, EyeOff, Trash2, Edit3, Save, X, ArrowUp, ArrowDown } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
@@ -441,7 +441,7 @@ export default function SuperAdminDashboard() {
                             <label className="block text-xs font-semibold text-maroon-700 dark:text-charcoal-300 mb-1">{t('superAdmin.image')}</label>
                             {catForm.image_url ? (
                               <div className="relative">
-                                <img src={catForm.image_url} alt="Category" className="w-full h-32 object-cover rounded-lg" />
+                                <img src={getUploadUrl(catForm.image_url)} alt="Category" className="w-full h-32 object-cover rounded-lg" />
                                 <button
                                   onClick={() => setCatForm({ ...catForm, image_url: '' })}
                                   className="absolute top-2 right-2 p-1 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
@@ -529,7 +529,7 @@ export default function SuperAdminDashboard() {
                       >
                         <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-maroon-50 dark:bg-charcoal-800 flex items-center justify-center">
                           {cat.image_url ? (
-                            <img src={cat.image_url} alt={cat.title} className="w-full h-full object-cover" />
+                            <img src={getUploadUrl(cat.image_url)} alt={cat.title} className="w-full h-full object-cover" />
                           ) : (
                             <span className="text-2xl">{cat.icon || '📁'}</span>
                           )}

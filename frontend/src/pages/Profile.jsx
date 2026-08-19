@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
-import api from '../lib/api';
+import api, { getUploadUrl } from '../lib/api';
 import { User, Mail, Calendar, Edit2, Save, X, Camera } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
@@ -71,7 +71,7 @@ export default function Profile() {
               <div className="relative group">
                 <div className="w-32 h-32 rounded-full bg-cream-100 dark:bg-charcoal-800 border-4 border-white dark:border-charcoal-900 shadow-lg flex items-center justify-center overflow-hidden">
                   {formData.avatar_url ? (
-                    <img src={formData.avatar_url} alt={user.username} className="w-full h-full object-cover" />
+                    <img src={getUploadUrl(formData.avatar_url)} alt={user.username} className="w-full h-full object-cover" />
                   ) : (
                     <User className="w-12 h-12 text-maroon-400 dark:text-charcoal-600" />
                   )}

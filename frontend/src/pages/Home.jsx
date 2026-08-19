@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { ArrowRight, Sparkles, BookOpen } from 'lucide-react';
 import { useCategories } from '../hooks/useCategories';
 import { useTranslation } from 'react-i18next';
+import { getUploadUrl } from '../lib/api';
 
 const colorStyles = {
   rose: {
@@ -71,7 +72,7 @@ function CategoryCard({ category, index }) {
         <div className={`flex flex-col ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
           <div className="relative w-full md:w-[52%] h-64 sm:h-72 md:h-[26rem] overflow-hidden">
             <motion.img
-              src={category.image_url || fallbackImage}
+              src={getUploadUrl(category.image_url) || fallbackImage}
               alt={category.title}
               className="w-full h-full object-cover"
               whileHover={{ scale: 1.06 }}

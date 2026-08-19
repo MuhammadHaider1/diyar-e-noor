@@ -71,7 +71,7 @@ export default function ImageUploader({ onUpload, aspect = 1, label = "Upload Im
       formData.append('file', file);
 
       const token = localStorage.getItem('access_token');
-      const response = await fetch('/api/v1/upload/image', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || '/api/v1'}/upload/image`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

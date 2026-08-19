@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { useCategories } from '../hooks/useCategories';
-import api from '../lib/api';
+import api, { getUploadUrl } from '../lib/api';
 import { PenTool, Trash2, Eye, Edit2, Plus, Clock, CheckCircle, XCircle, X, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
                 <label className="block text-sm font-medium text-maroon-700 dark:text-charcoal-300 mb-2">{t('adminDashboard.coverImage')}</label>
                 {formData.cover_image_url ? (
                   <div className="relative">
-                    <img src={formData.cover_image_url} alt="Cover" className="w-full h-40 object-cover rounded-xl" />
+                    <img src={getUploadUrl(formData.cover_image_url)} alt="Cover" className="w-full h-40 object-cover rounded-xl" />
                     <button
                       onClick={() => setFormData({ ...formData, cover_image_url: '' })}
                       className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
