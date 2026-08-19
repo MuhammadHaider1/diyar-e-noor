@@ -1,4 +1,5 @@
 import asyncio
+import os
 from logging.config import fileConfig
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
@@ -9,6 +10,17 @@ from app.models import models
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
+
+db_url = os.environ.get("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
+if db_url and db_url.startswith("postgresql://"):
+    db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+if db_url and "channel_binding=require" in db_url:
+    db_url = db_url.replace("&channel_binding=require", "")
+if db_url and "?sslmode=require" in db_url:
+    db_url = db_url.replace("?sslmode=require", "")
+if db_url and "&sslmode=require" in db_url:
+    db_url = db_url.replace("&sslmode=require", "")
+config.set_main_option("sqlalchemy.url", db_url)
 
 target_metadata = Base.metadata
 
