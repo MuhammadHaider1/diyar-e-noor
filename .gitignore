@@ -1,0 +1,23 @@
+# Backend
+backend/venv/
+__pycache__/
+*.pyc
+.env
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Uploads
+uploads/
+
+# Docker
+docker-compose.override.yml
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

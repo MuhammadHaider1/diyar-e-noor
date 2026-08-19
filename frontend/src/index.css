@@ -1,0 +1,239 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  body {
+    @apply bg-cream-50 text-maroon-900 font-body antialiased;
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  .dark body,
+  .dark {
+    @apply bg-charcoal-950 text-cream-100;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  /* Islamic geometric pattern overlay */
+  .islamic-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4A843' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .dark .islamic-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4A843' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Reading content styles */
+  .reading-content {
+    @apply text-lg leading-relaxed;
+    line-height: 1.9;
+  }
+
+  .reading-content p {
+    @apply mb-6 text-maroon-800;
+  }
+
+  .dark .reading-content p {
+    @apply text-charcoal-200;
+  }
+
+  .reading-content h1,
+  .reading-content h2,
+  .reading-content h3 {
+    @apply font-display text-maroon-900 mt-10 mb-4;
+  }
+
+  .dark .reading-content h1,
+  .dark .reading-content h2,
+  .dark .reading-content h3 {
+    @apply text-cream-50;
+  }
+
+  .reading-content blockquote {
+    @apply border-l-4 border-gold-500 pl-6 italic text-maroon-700 my-8;
+  }
+
+  .dark .reading-content blockquote {
+    @apply text-charcoal-300 border-gold-500;
+  }
+
+  /* Card hover effect */
+  .card-hover {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .card-hover:hover {
+    @apply -translate-y-1 shadow-premium-lg;
+  }
+
+  .dark .card-hover:hover {
+    @apply shadow-premium-dark;
+  }
+
+  /* Nav link underline effect */
+  .nav-link {
+    @apply relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  /* Premium glass card */
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm border border-maroon-100/50;
+  }
+
+  .dark .glass-card {
+    @apply bg-charcoal-900/80 border-charcoal-700/50;
+  }
+
+  /* Premium gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-maroon-700 via-gold-500 to-maroon-700;
+  }
+
+  .dark .gradient-text {
+    @apply from-gold-400 via-gold-300 to-gold-400;
+  }
+
+  /* Gold shimmer text effect */
+  .gold-shimmer {
+    background: linear-gradient(
+      120deg,
+      #D4A843 0%,
+      #FDE68A 25%,
+      #D4A843 50%,
+      #FDE68A 75%,
+      #D4A843 100%
+    );
+    background-size: 200% auto;
+    @apply bg-clip-text text-transparent;
+    animation: shimmer 3s linear infinite;
+  }
+
+  /* Premium button with gold border glow */
+  .btn-premium {
+    @apply relative overflow-hidden;
+  }
+
+  .btn-premium::before {
+    content: '';
+    @apply absolute inset-0 rounded-full;
+    background: linear-gradient(135deg, rgba(212, 168, 67, 0.2) 0%, transparent 50%, rgba(212, 168, 67, 0.2) 100%);
+    opacity: 0;
+    @apply transition-opacity duration-300;
+  }
+
+  .btn-premium:hover::before {
+    opacity: 1;
+  }
+
+  /* Dark mode card base */
+  .dark-card {
+    @apply bg-white border border-maroon-50;
+  }
+
+  .dark .dark-card {
+    @apply bg-charcoal-900 border-charcoal-700/50;
+  }
+
+  /* Input dark mode */
+  .dark-input {
+    @apply bg-cream-50 border border-maroon-100;
+  }
+
+  .dark .dark-input {
+    @apply bg-charcoal-800 border-charcoal-700 text-cream-100 placeholder:text-charcoal-500;
+  }
+
+  /* Badge dark mode */
+  .dark-badge {
+    @apply bg-maroon-100 text-maroon-700;
+  }
+
+  .dark .dark-badge {
+    @apply bg-maroon-900/50 text-maroon-300;
+  }
+
+  /* Subtle gold divider */
+  .gold-divider {
+    @apply h-px bg-gradient-to-r from-transparent via-gold-400/40 to-transparent;
+  }
+
+  /* Section title with decorative elements */
+  .section-title {
+    @apply relative;
+  }
+
+  .section-title::before,
+  .section-title::after {
+    content: '✦';
+    @apply text-gold-400 text-xs mx-3 opacity-60;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-cream-100;
+}
+
+.dark ::-webkit-scrollbar-track {
+  @apply bg-charcoal-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-maroon-300 rounded-full;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-maroon-700;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-maroon-400;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-maroon-600;
+}
+
+/* Selection */
+::selection {
+  @apply bg-maroon-200 text-maroon-900;
+}
+
+.dark ::selection {
+  @apply bg-maroon-800 text-cream-100;
+}
+
+/* Smooth theme transition on all elements */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-timing-function: ease;
+  transition-duration: 0ms;
+}
+
+.dark * {
+  transition-duration: 400ms;
+}
