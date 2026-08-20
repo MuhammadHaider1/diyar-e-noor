@@ -56,7 +56,7 @@ async def get_followers(
     query = (
         select(Follow)
         .where(Follow.following_id == user_id)
-        .options(selectinload(Follow.follower))
+        .options(selectinload(Follow.follower), selectinload(Follow.following))
         .order_by(Follow.created_at.desc())
         .offset((page - 1) * limit)
         .limit(limit)
@@ -85,7 +85,7 @@ async def get_following(
     query = (
         select(Follow)
         .where(Follow.follower_id == user_id)
-        .options(selectinload(Follow.following))
+        .options(selectinload(Follow.follower), selectinload(Follow.following))
         .order_by(Follow.created_at.desc())
         .offset((page - 1) * limit)
         .limit(limit)
