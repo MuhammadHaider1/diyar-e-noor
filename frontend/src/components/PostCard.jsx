@@ -3,9 +3,8 @@ import { motion } from 'framer-motion';
 import { Heart, MessageCircle, Eye } from 'lucide-react';
 import { useCategories } from '../hooks/useCategories';
 import { getUploadUrl } from '../lib/api';
-import FollowButton from './FollowButton';
 
-export default function PostCard({ post, index, onFollowChange }) {
+export default function PostCard({ post, index }) {
   const { categories, getColorClasses } = useCategories();
   const slugMap = {};
   categories.forEach(c => { slugMap[c.slug] = c; });
@@ -67,23 +66,13 @@ export default function PostCard({ post, index, onFollowChange }) {
             </div>
 
             {post.admin && (
-              <div className="flex items-center gap-2">
-                <Link
-                  to={`/user/${post.admin_id}`}
-                  className="text-maroon-400 dark:text-charcoal-600 hover:text-maroon-600 dark:hover:text-gold-400 transition-colors"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  by {post.admin.display_name || post.admin.username}
-                </Link>
-                <FollowButton
-                  userId={post.admin_id}
-                  initialFollowing={post.is_following_author || false}
-                  size="sm"
-                  onCountChange={(count, following) => {
-                    if (onFollowChange) onFollowChange(post.admin_id, following);
-                  }}
-                />
-              </div>
+              <Link
+                to={`/user/${post.admin_id}`}
+                className="text-maroon-400 dark:text-charcoal-600 hover:text-maroon-600 dark:hover:text-gold-400 transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                by {post.admin.display_name || post.admin.username}
+              </Link>
             )}
           </div>
         </div>
