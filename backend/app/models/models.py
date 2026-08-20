@@ -76,7 +76,7 @@ class Comment(Base):
 
     post = relationship("Post", back_populates="comments")
     user = relationship("User", back_populates="comments")
-    replies = relationship("Comment", backref="parent", remote_side="Comment.id", lazy="selectin")
+    replies = relationship("Comment", backref="parent", remote_side="Comment.id", lazy="raise")
 
 
 class Like(Base):

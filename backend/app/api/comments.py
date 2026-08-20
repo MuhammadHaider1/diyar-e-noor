@@ -5,10 +5,23 @@ from sqlalchemy.orm import selectinload
 from app.core.database import get_db
 from app.models.models import Comment, Post, User, Like, Notification
 from app.models.enums import NotificationType
-from app.schemas.schemas import CommentCreate, CommentUpdate, CommentResponse
+from app.schemas.schemas import CommentCreate, CommentUpdate, CommentResponse, UserResponse
 from app.api.deps import get_current_user, get_optional_user
 
 router = APIRouter(tags=["comments"])
+
+
+def _comment_to_response(comment: Comment, replies=None) -> dict:
+    return {
+        "id": comment.id,
+        "post_id": comment.post_id,
+        "user_id": comment.user_id,
+        "content": comment.content,
+        "parent_id": comment.parent_id,
+        "created_at": comment.created_at,
+        "user": comment.user,
+        "replies": replies or [],
+    }
 
 
 @router.get("/posts/{post_id}/comments", response_model=list[CommentResponse])
@@ -18,9 +31,19 @@ async def get_comments(
 ):
     result = await db.execute(
         select(Comment).where(Comment.post_id == post_id, Comment.parent_id == None)
+        .options(selectinload(Comment.user))
     )
     comments = result.scalars().all()
-    return comments
+
+    response = []
+    for comment in comments:
+        replies_result = await db.execute(
+            select(Comment).where(Comment.parent_id == comment.id)
+            .options(selectinload(Comment.user))
+        )
+        replies = replies_result.scalars().all()
+        response.append(_comment_to_response(comment, replies))
+    return response
 
 
 @router.post("/posts/{post_id}/comments", response_model=CommentResponse, status_code=status.HTTP_201_CREATED)
@@ -74,9 +97,13 @@ async def create_comment(
                 post_id=post_id,
                 comment_id=comment.id,
             ))
-
     await db.flush()
-    return comment
+
+    result = await db.execute(
+        select(Comment).where(Comment.id == comment.id)
+        .options(selectinload(Comment.user))
+    )
+    return _comment_to_response(result.scalar_one())
 
 
 @router.put("/comments/{comment_id}", response_model=CommentResponse)
@@ -95,8 +122,12 @@ async def update_comment(
 
     comment.content = comment_data.content
     await db.flush()
-    await db.refresh(comment)
-    return comment
+
+    result = await db.execute(
+        select(Comment).where(Comment.id == comment.id)
+        .options(selectinload(Comment.user))
+    )
+    return _comment_to_response(result.scalar_one())
 
 
 @router.delete("/comments/{comment_id}", status_code=status.HTTP_204_NO_CONTENT)
