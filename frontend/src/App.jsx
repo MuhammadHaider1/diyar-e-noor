@@ -15,6 +15,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import BecomeAdmin from './pages/BecomeAdmin';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import Categories from './pages/Categories';
+import WriterProfile from './pages/WriterProfile';
 import ErrorBoundary from './components/ErrorBoundary';
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ function App() {
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/become-admin" element={<BecomeAdmin />} />
                     <Route path="/superadmin" element={<SuperAdminDashboard />} />
+                    <Route path="/user/:id" element={<WriterProfile />} />
                     </Routes>
                   </ErrorBoundary>
                 </main>

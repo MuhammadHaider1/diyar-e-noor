@@ -45,3 +45,11 @@ class AdminRequestStatus(str, enum.Enum):
     pending = "pending"
     approved = "approved"
     rejected = "rejected"
+
+
+class NotificationType(str, enum.Enum):
+    follow = "follow"
+    like = "like"
+    comment = "comment"
+    reply = "reply"
+    new_post = "new_post"

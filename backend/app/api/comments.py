@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.core.database import get_db
-from app.models.models import Comment, Post, User, Like
+from app.models.models import Comment, Post, User, Like, Notification
+from app.models.enums import NotificationType
 from app.schemas.schemas import CommentCreate, CommentUpdate, CommentResponse
 from app.api.deps import get_current_user, get_optional_user
 
@@ -46,6 +48,34 @@ async def create_comment(
     db.add(comment)
     await db.flush()
     await db.refresh(comment)
+
+    post_result = await db.execute(select(Post).where(Post.id == post_id))
+    post = post_result.scalar_one()
+
+    if comment_data.parent_id:
+        parent_result = await db.execute(
+            select(Comment).where(Comment.id == comment_data.parent_id)
+        )
+        parent_comment = parent_result.scalar_one()
+        if parent_comment.user_id != current_user.id:
+            db.add(Notification(
+                recipient_id=parent_comment.user_id,
+                sender_id=current_user.id,
+                type=NotificationType.reply,
+                post_id=post_id,
+                comment_id=comment.id,
+            ))
+    else:
+        if post.admin_id != current_user.id:
+            db.add(Notification(
+                recipient_id=post.admin_id,
+                sender_id=current_user.id,
+                type=NotificationType.comment,
+                post_id=post_id,
+                comment_id=comment.id,
+            ))
+
+    await db.flush()
     return comment
 
 
@@ -103,4 +133,15 @@ async def toggle_like(
     else:
         like = Like(post_id=post_id, user_id=current_user.id)
         db.add(like)
+
+        post_result = await db.execute(select(Post).where(Post.id == post_id))
+        post = post_result.scalar_one()
+        if post.admin_id != current_user.id:
+            db.add(Notification(
+                recipient_id=post.admin_id,
+                sender_id=current_user.id,
+                type=NotificationType.like,
+                post_id=post_id,
+            ))
+
         return {"liked": True}

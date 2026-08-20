@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import api, { getUploadUrl } from '../lib/api';
 import LikeButton from '../components/LikeButton';
 import Comments from '../components/Comments';
+import FollowButton from '../components/FollowButton';
 import { useCategories } from '../hooks/useCategories';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
@@ -87,7 +88,17 @@ export default function PostDetail() {
             {post.admin && (
               <span className="flex items-center space-x-2">
                 <User className="w-4 h-4" />
-                <span>{post.admin.display_name || post.admin.username}</span>
+                <Link
+                  to={`/user/${post.admin_id}`}
+                  className="hover:text-maroon-700 dark:hover:text-gold-400 transition-colors"
+                >
+                  {post.admin.display_name || post.admin.username}
+                </Link>
+                <FollowButton
+                  userId={post.admin_id}
+                  size="sm"
+                  onCountChange={() => {}}
+                />
               </span>
             )}
             <span className="flex items-center space-x-2">

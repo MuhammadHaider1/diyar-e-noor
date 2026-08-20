@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from sqlalchemy import String, Text, Boolean, DateTime, ForeignKey, Enum, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.database import Base
-from app.models.enums import UserRole, PostCategory, PostStatus, SubscriptionStatus, PaymentMethod, AdminRequestStatus
+from app.models.enums import UserRole, PostCategory, PostStatus, SubscriptionStatus, PaymentMethod, AdminRequestStatus, NotificationType
 
 
 class User(Base):
@@ -24,6 +24,9 @@ class User(Base):
     comments = relationship("Comment", back_populates="user", lazy="selectin")
     likes = relationship("Like", back_populates="user", lazy="selectin")
     subscriptions = relationship("AdminSubscription", back_populates="user", lazy="selectin")
+    followers = relationship("Follow", foreign_keys="Follow.following_id", back_populates="following", lazy="selectin")
+    following = relationship("Follow", foreign_keys="Follow.follower_id", back_populates="follower", lazy="selectin")
+    notifications = relationship("Notification", foreign_keys="Notification.recipient_id", back_populates="recipient", lazy="selectin")
 
 
 class AdminSubscription(Base):
@@ -122,3 +125,34 @@ class Category(Base):
     sort_order: Mapped[int] = mapped_column(default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+
+class Follow(Base):
+    __tablename__ = "follows"
+    __table_args__ = (UniqueConstraint("follower_id", "following_id"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    follower_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    following_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    follower = relationship("User", foreign_keys=[follower_id], back_populates="following")
+    following = relationship("User", foreign_keys=[following_id], back_populates="followers")
+
+
+class Notification(Base):
+    __tablename__ = "notifications"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    recipient_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    sender_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    type: Mapped[NotificationType] = mapped_column(Enum(NotificationType))
+    post_id: Mapped[int] = mapped_column(ForeignKey("posts.id"), nullable=True)
+    comment_id: Mapped[int] = mapped_column(ForeignKey("comments.id"), nullable=True)
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    recipient = relationship("User", foreign_keys=[recipient_id], back_populates="notifications")
+    sender = relationship("User", foreign_keys=[sender_id])
+    post = relationship("Post")
+    comment = relationship("Comment")

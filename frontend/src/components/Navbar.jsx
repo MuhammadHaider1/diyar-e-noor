@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../hooks/useTheme';
 import { useTranslation } from 'react-i18next';
 import { Menu, X, Heart, User, LogOut, PenTool, Shield, Sun, Moon, Globe } from 'lucide-react';
+import NotificationBell from './NotificationBell';
 
 const LANGUAGES = [
   { code: 'en', label: 'EN', full: 'English' },
@@ -127,13 +128,16 @@ export default function Navbar() {
             ))}
 
             {user ? (
-              <button
-                onClick={logout}
-                className="text-maroon-600 dark:text-charcoal-400 hover:text-maroon-800 dark:hover:text-cream-100 transition-colors duration-200"
-                title={t('nav.logout')}
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
+              <>
+                <NotificationBell />
+                <button
+                  onClick={logout}
+                  className="text-maroon-600 dark:text-charcoal-400 hover:text-maroon-800 dark:hover:text-cream-100 transition-colors duration-200"
+                  title={t('nav.logout')}
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </>
             ) : (
               <div className="flex items-center space-x-3">
                 <Link
@@ -187,6 +191,7 @@ export default function Navbar() {
 
           {/* Mobile Controls */}
           <div className="flex md:hidden items-center space-x-2">
+            {user && <NotificationBell />}
             <LangButton mobile />
             <button
               onClick={toggle}

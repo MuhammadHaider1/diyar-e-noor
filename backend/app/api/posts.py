@@ -4,8 +4,8 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 from slugify import slugify
 from app.core.database import get_db
-from app.models.models import Post, User, Like, Comment
-from app.models.enums import PostStatus, PostCategory
+from app.models.models import Post, User, Like, Comment, Follow, Notification
+from app.models.enums import PostStatus, PostCategory, NotificationType
 from app.schemas.schemas import PostCreate, PostUpdate, PostResponse, PaginatedResponse
 from app.api.deps import get_current_user, require_admin, get_optional_user
 
@@ -128,6 +128,21 @@ async def create_post(
     db.add(post)
     await db.flush()
     await db.refresh(post)
+
+    if post.status == PostStatus.published:
+        followers_result = await db.execute(
+            select(Follow.follower_id).where(Follow.following_id == current_user.id)
+        )
+        follower_ids = [row[0] for row in followers_result.fetchall()]
+        for fid in follower_ids:
+            if fid != current_user.id:
+                db.add(Notification(
+                    recipient_id=fid,
+                    sender_id=current_user.id,
+                    type=NotificationType.new_post,
+                    post_id=post.id,
+                ))
+        await db.flush()
 
     post_response = PostResponse.model_validate(post)
     post_response.likes_count = 0

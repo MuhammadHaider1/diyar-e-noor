@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Heart, MessageCircle, Eye } from 'lucide-react';
 import { useCategories } from '../hooks/useCategories';
 import { getUploadUrl } from '../lib/api';
+import FollowButton from './FollowButton';
 
 export default function PostCard({ post, index }) {
   const { categories, getColorClasses } = useCategories();
@@ -19,8 +20,8 @@ export default function PostCard({ post, index }) {
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className="group"
     >
-      <Link to={`/post/${post.slug}`}>
-        <div className="dark-card rounded-2xl overflow-hidden shadow-premium dark:shadow-premium-dark card-hover">
+      <div className="dark-card rounded-2xl overflow-hidden shadow-premium dark:shadow-premium-dark card-hover">
+        <Link to={`/post/${post.slug}`}>
           {post.cover_image_url && (
             <div className="aspect-[16/10] overflow-hidden">
               <img
@@ -30,47 +31,60 @@ export default function PostCard({ post, index }) {
               />
             </div>
           )}
+        </Link>
 
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-3">
-              <span className={`px-3 py-1 rounded-full text-xs font-medium ${badgeClass}`}>
-                {cat?.title || post.category}
-              </span>
-            </div>
+        <div className="p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <span className={`px-3 py-1 rounded-full text-xs font-medium ${badgeClass}`}>
+              {cat?.title || post.category}
+            </span>
+          </div>
 
+          <Link to={`/post/${post.slug}`}>
             <h3 className="font-display text-xl font-semibold text-maroon-900 dark:text-cream-50 mb-2 group-hover:text-maroon-700 dark:group-hover:text-gold-400 transition-colors line-clamp-2">
               {post.title}
             </h3>
+          </Link>
 
-            <p className="text-maroon-600 dark:text-charcoal-400 text-sm line-clamp-3 mb-4 leading-relaxed">
-              {post.content.substring(0, 150)}...
-            </p>
+          <p className="text-maroon-600 dark:text-charcoal-400 text-sm line-clamp-3 mb-4 leading-relaxed">
+            {post.content.substring(0, 150)}...
+          </p>
 
-            <div className="flex items-center justify-between text-maroon-500 dark:text-charcoal-500 text-sm">
-              <div className="flex items-center space-x-4">
-                <span className="flex items-center space-x-1">
-                  <Heart className="w-4 h-4" />
-                  <span>{post.likes_count}</span>
-                </span>
-                <span className="flex items-center space-x-1">
-                  <MessageCircle className="w-4 h-4" />
-                  <span>{post.comments_count}</span>
-                </span>
-                <span className="flex items-center space-x-1">
-                  <Eye className="w-4 h-4" />
-                  <span>{post.views_count}</span>
-                </span>
-              </div>
-
-              {post.admin && (
-                <span className="text-maroon-400 dark:text-charcoal-600">
-                  by {post.admin.display_name || post.admin.username}
-                </span>
-              )}
+          <div className="flex items-center justify-between text-maroon-500 dark:text-charcoal-500 text-sm">
+            <div className="flex items-center space-x-4">
+              <span className="flex items-center space-x-1">
+                <Heart className="w-4 h-4" />
+                <span>{post.likes_count}</span>
+              </span>
+              <span className="flex items-center space-x-1">
+                <MessageCircle className="w-4 h-4" />
+                <span>{post.comments_count}</span>
+              </span>
+              <span className="flex items-center space-x-1">
+                <Eye className="w-4 h-4" />
+                <span>{post.views_count}</span>
+              </span>
             </div>
+
+            {post.admin && (
+              <div className="flex items-center gap-2">
+                <Link
+                  to={`/user/${post.admin_id}`}
+                  className="text-maroon-400 dark:text-charcoal-600 hover:text-maroon-600 dark:hover:text-gold-400 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  by {post.admin.display_name || post.admin.username}
+                </Link>
+                <FollowButton
+                  userId={post.admin_id}
+                  size="sm"
+                  onCountChange={() => {}}
+                />
+              </div>
+            )}
           </div>
         </div>
-      </Link>
+      </div>
     </motion.article>
   );
 }

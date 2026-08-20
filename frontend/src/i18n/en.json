@@ -101,7 +101,18 @@
     "noBio": "No bio yet",
     "profileUpdated": "Profile updated!",
     "updateFailed": "Failed to update profile",
-    "photoUploaded": "Photo uploaded! Click Save to apply."
+    "photoUploaded": "Photo uploaded! Click Save to apply.",
+    "follow": "Follow",
+    "following": "Following",
+    "followers": "Followers",
+    "posts": "Posts",
+    "joined": "Joined",
+    "noPosts": "No posts yet"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "empty": "No notifications yet"
   },
   "becomeAdmin": {
     "title": "Become an Admin",

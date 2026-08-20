@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, EmailStr
-from app.models.enums import UserRole, PostCategory, PostStatus, SubscriptionStatus, PaymentMethod, AdminRequestStatus
+from app.models.enums import UserRole, PostCategory, PostStatus, SubscriptionStatus, PaymentMethod, AdminRequestStatus, NotificationType
 
 
 class UserCreate(BaseModel):
@@ -202,6 +202,51 @@ class CategoryResponse(BaseModel):
     sort_order: int
     created_at: datetime
     updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class FollowResponse(BaseModel):
+    id: int
+    follower_id: int
+    following_id: int
+    created_at: datetime
+    follower: Optional[UserResponse] = None
+    following: Optional[UserResponse] = None
+
+    class Config:
+        from_attributes = True
+
+
+class NotificationResponse(BaseModel):
+    id: int
+    recipient_id: int
+    sender_id: int
+    type: NotificationType
+    post_id: Optional[int] = None
+    comment_id: Optional[int] = None
+    is_read: bool
+    created_at: datetime
+    sender: Optional[UserResponse] = None
+    post_title: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class UserPublicProfile(BaseModel):
+    id: int
+    username: str
+    display_name: Optional[str]
+    avatar_url: Optional[str]
+    bio: Optional[str]
+    role: UserRole
+    created_at: datetime
+    followers_count: int = 0
+    following_count: int = 0
+    posts_count: int = 0
+    is_following: bool = False
 
     class Config:
         from_attributes = True
