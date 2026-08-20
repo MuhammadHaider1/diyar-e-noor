@@ -243,7 +243,7 @@ export default function Profile() {
                 {activeTab === 'posts' && (
                   posts.length > 0 ? (
                     <div className="space-y-4">
-                      {posts.map((post, i) => <PostCard key={post.id} post={post} index={i} />)}
+                      {posts.map((post, i) => <PostCard key={post.id} post={post} index={i} onFollowChange={() => fetchTabData(activeTab)} />)}
                     </div>
                   ) : (
                     <EmptyState icon={BookOpen} message="No posts yet" />
@@ -253,7 +253,7 @@ export default function Profile() {
                 {activeTab === 'liked' && (
                   likedPosts.length > 0 ? (
                     <div className="space-y-4">
-                      {likedPosts.map((post, i) => <PostCard key={post.id} post={post} index={i} />)}
+                      {likedPosts.map((post, i) => <PostCard key={post.id} post={post} index={i} onFollowChange={() => fetchTabData(activeTab)} />)}
                     </div>
                   ) : (
                     <EmptyState icon={Heart} message="No liked posts yet" />

@@ -42,9 +42,8 @@ export default function WriterProfile() {
   const fetchPosts = async () => {
     try {
       setPostsLoading(true);
-      const res = await api.get('/posts', { params: { status: 'published', limit: 50 } });
-      const authorPosts = res.data.items.filter(p => p.admin_id === parseInt(id));
-      setPosts(authorPosts);
+      const res = await api.get(`/social/users/${id}/posts`, { params: { page: 1, limit: 50 } });
+      setPosts(res.data.items);
     } catch (e) {
       console.error('Failed to load posts:', e);
     } finally {

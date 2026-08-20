@@ -144,6 +144,7 @@ async def get_user_public_profile(
 async def get_user_public_profile_no_auth(
     user_id: int,
     db: AsyncSession = Depends(get_db),
+    current_user: User | None = Depends(get_optional_user),
 ):
     user = await db.get(User, user_id)
     if not user:
@@ -152,6 +153,13 @@ async def get_user_public_profile_no_auth(
     followers_count = await _get_followers_count(db, user_id)
     following_count = await _get_following_count(db, user_id)
     posts_count = await _get_posts_count(db, user_id)
+
+    is_following = False
+    if current_user and current_user.id != user_id:
+        result = await db.execute(
+            select(Follow).where(Follow.follower_id == current_user.id, Follow.following_id == user_id)
+        )
+        is_following = result.scalar_one_or_none() is not None
 
     return UserPublicProfile(
         id=user.id,
@@ -164,7 +172,7 @@ async def get_user_public_profile_no_auth(
         followers_count=followers_count,
         following_count=following_count,
         posts_count=posts_count,
-        is_following=False,
+        is_following=is_following,
     )
 
 

@@ -96,8 +96,9 @@ export default function PostDetail() {
                 </Link>
                 <FollowButton
                   userId={post.admin_id}
+                  initialFollowing={post.is_following_author}
                   size="sm"
-                  onCountChange={() => {}}
+                  onCountChange={(count, following) => setPost(prev => ({ ...prev, is_following_author: following }))}
                 />
               </span>
             )}
