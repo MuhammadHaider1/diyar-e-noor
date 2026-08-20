@@ -5,7 +5,7 @@ import { useCategories } from '../hooks/useCategories';
 import { getUploadUrl } from '../lib/api';
 import FollowButton from './FollowButton';
 
-export default function PostCard({ post, index }) {
+export default function PostCard({ post, index, onFollowChange }) {
   const { categories, getColorClasses } = useCategories();
   const slugMap = {};
   categories.forEach(c => { slugMap[c.slug] = c; });
@@ -77,8 +77,11 @@ export default function PostCard({ post, index }) {
                 </Link>
                 <FollowButton
                   userId={post.admin_id}
+                  initialFollowing={post.is_following_author || false}
                   size="sm"
-                  onCountChange={() => {}}
+                  onCountChange={(count, following) => {
+                    if (onFollowChange) onFollowChange(post.admin_id, following);
+                  }}
                 />
               </div>
             )}

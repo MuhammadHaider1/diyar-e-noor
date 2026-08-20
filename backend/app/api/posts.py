@@ -51,14 +51,21 @@ async def list_posts(
         comments_count = comments_count_result.scalar()
 
         is_liked = False
+        is_following_author = False
         if current_user:
             like_result = await db.execute(select(Like).where(Like.post_id == post.id, Like.user_id == current_user.id))
             is_liked = like_result.scalar_one_or_none() is not None
+            if post.admin_id != current_user.id:
+                follow_result = await db.execute(
+                    select(Follow).where(Follow.follower_id == current_user.id, Follow.following_id == post.admin_id)
+                )
+                is_following_author = follow_result.scalar_one_or_none() is not None
 
         post_response = PostResponse.model_validate(post)
         post_response.likes_count = likes_count
         post_response.comments_count = comments_count
         post_response.is_liked = is_liked
+        post_response.is_following_author = is_following_author
         post_responses.append(post_response)
 
     return PaginatedResponse(
@@ -89,14 +96,21 @@ async def get_post(
     comments_count = comments_count_result.scalar()
 
     is_liked = False
+    is_following_author = False
     if current_user:
         like_result = await db.execute(select(Like).where(Like.post_id == post.id, Like.user_id == current_user.id))
         is_liked = like_result.scalar_one_or_none() is not None
+        if post.admin_id != current_user.id:
+            follow_result = await db.execute(
+                select(Follow).where(Follow.follower_id == current_user.id, Follow.following_id == post.admin_id)
+            )
+            is_following_author = follow_result.scalar_one_or_none() is not None
 
     post_response = PostResponse.model_validate(post)
     post_response.likes_count = likes_count
     post_response.comments_count = comments_count
     post_response.is_liked = is_liked
+    post_response.is_following_author = is_following_author
     return post_response
 
 

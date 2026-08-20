@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, delete
 from sqlalchemy.orm import selectinload
 from app.core.database import get_db
-from app.api.deps import get_current_user
-from app.models.models import User, Follow, Notification, Post
+from app.api.deps import get_current_user, get_optional_user
+from app.models.models import User, Follow, Notification, Post, Like, Comment
 from app.models.enums import NotificationType
-from app.schemas.schemas import FollowResponse, NotificationResponse, UserPublicProfile
+from app.schemas.schemas import FollowResponse, NotificationResponse, UserPublicProfile, UserResponse, PostResponse, PaginatedResponse
 
 router = APIRouter(prefix="/social", tags=["social"])
 
@@ -202,13 +202,15 @@ async def get_notifications(
             comment_id=n.comment_id,
             is_read=n.is_read,
             created_at=n.created_at,
-            sender=UserPublicProfile(
+            sender=UserResponse(
                 id=n.sender.id,
                 username=n.sender.username,
+                email=n.sender.email,
+                role=n.sender.role,
                 display_name=n.sender.display_name,
                 avatar_url=n.sender.avatar_url,
                 bio=n.sender.bio,
-                role=n.sender.role,
+                is_active=n.sender.is_active,
                 created_at=n.sender.created_at,
             ) if n.sender else None,
             post_title=n.post.title if n.post else None,
@@ -310,3 +312,96 @@ async def _get_following_count(db: AsyncSession, user_id: int) -> int:
 async def _get_posts_count(db: AsyncSession, user_id: int) -> int:
     result = await db.execute(select(func.count(Post.id)).where(Post.admin_id == user_id, Post.status == "published"))
     return result.scalar()
+
+
+@router.get("/users/{user_id}/posts")
+async def get_user_posts(
+    user_id: int,
+    page: int = Query(1, ge=1),
+    limit: int = Query(12, ge=1, le=50),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_optional_user),
+):
+    query = (
+        select(Post)
+        .where(Post.admin_id == user_id, Post.status == "published")
+        .options(selectinload(Post.admin))
+        .order_by(Post.created_at.desc())
+        .offset((page - 1) * limit)
+        .limit(limit)
+    )
+    result = await db.execute(query)
+    posts = result.scalars().all()
+
+    total_result = await db.execute(
+        select(func.count(Post.id)).where(Post.admin_id == user_id, Post.status == "published")
+    )
+    total = total_result.scalar()
+
+    items = []
+    for post in posts:
+        likes_count = (await db.execute(select(func.count(Like.id)).where(Like.post_id == post.id))).scalar()
+        comments_count = (await db.execute(select(func.count(Comment.id)).where(Comment.post_id == post.id))).scalar()
+        is_liked = False
+        is_following_author = False
+        if current_user:
+            is_liked = (await db.execute(select(Like).where(Like.post_id == post.id, Like.user_id == current_user.id))).scalar_one_or_none() is not None
+            if post.admin_id != current_user.id:
+                is_following_author = (await db.execute(select(Follow).where(Follow.follower_id == current_user.id, Follow.following_id == post.admin_id))).scalar_one_or_none() is not None
+
+        pr = PostResponse.model_validate(post)
+        pr.likes_count = likes_count
+        pr.comments_count = comments_count
+        pr.is_liked = is_liked
+        pr.is_following_author = is_following_author
+        items.append(pr)
+
+    return PaginatedResponse(items=items, total=total, page=page, pages=(total + limit - 1) // limit)
+
+
+@router.get("/users/{user_id}/liked-posts")
+async def get_user_liked_posts(
+    user_id: int,
+    page: int = Query(1, ge=1),
+    limit: int = Query(12, ge=1, le=50),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_optional_user),
+):
+    query = (
+        select(Post)
+        .join(Like, Like.post_id == Post.id)
+        .where(Like.user_id == user_id, Post.status == "published")
+        .options(selectinload(Post.admin))
+        .order_by(Post.created_at.desc())
+        .offset((page - 1) * limit)
+        .limit(limit)
+    )
+    result = await db.execute(query)
+    posts = result.scalars().all()
+
+    total_result = await db.execute(
+        select(func.count(Post.id))
+        .join(Like, Like.post_id == Post.id)
+        .where(Like.user_id == user_id, Post.status == "published")
+    )
+    total = total_result.scalar()
+
+    items = []
+    for post in posts:
+        likes_count = (await db.execute(select(func.count(Like.id)).where(Like.post_id == post.id))).scalar()
+        comments_count = (await db.execute(select(func.count(Comment.id)).where(Comment.post_id == post.id))).scalar()
+        is_liked = False
+        is_following_author = False
+        if current_user:
+            is_liked = (await db.execute(select(Like).where(Like.post_id == post.id, Like.user_id == current_user.id))).scalar_one_or_none() is not None
+            if post.admin_id != current_user.id:
+                is_following_author = (await db.execute(select(Follow).where(Follow.follower_id == current_user.id, Follow.following_id == post.admin_id))).scalar_one_or_none() is not None
+
+        pr = PostResponse.model_validate(post)
+        pr.likes_count = likes_count
+        pr.comments_count = comments_count
+        pr.is_liked = is_liked
+        pr.is_following_author = is_following_author
+        items.append(pr)
+
+    return PaginatedResponse(items=items, total=total, page=page, pages=(total + limit - 1) // limit)

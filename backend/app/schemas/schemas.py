@@ -79,6 +79,7 @@ class PostResponse(BaseModel):
     likes_count: int = 0
     comments_count: int = 0
     is_liked: bool = False
+    is_following_author: bool = False
 
     class Config:
         from_attributes = True
